@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+		* {margin: 0; padding: 0; }
+		.container {
+			display: flex;  
+
+		}
+		.box{
+		/*要元素处于页面中心时： 一般布局 但是当元素大小未知 或者大小会变化时不适用  并且也更加复杂
+			position: absolute; 
+			left: 50%; 
+			top: 50%; 
+			margin-left: -50px; 
+			margin-top: -50px;
+		*/
+		
+		
+		justify-content: center;   /*水平居中*/
+		align-items: center ;  /*垂直居中*/
+		
+		}
+		
+		.box1 {
+			width: 100px; 
+			height: 100px; 
+			background-color： #456789;
+			font-size: 50px;
+		 }
+
+
+
+	</style>
+		<script>
+
+		</script>
+</head>
+<body>
+	<div class="ontainer">
+		<div class="box  box1">1</div>
+	</div>
+
+
+
+</body>
+</html>

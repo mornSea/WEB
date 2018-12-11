@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+		* {margin: 0; padding: 0; }
+
+		.cotainer{
+			display: flex;   /*加入这个之后 从三行变成一行三栏  并且高宽自动相等  （因为align-items默认值为stretch）*/
+			flex： wrap； /*自动化  如果没有定宽 会扩展到一栏一行*/
+		
+		}
+		header{
+			color: #FFF; 
+			background-color: #FF33FF;
+			text-align: center;
+		}
+
+		article{
+			background-color: #55FFEE; 
+			color: #2b2b2b; 
+			margin: 10px 10px 10px 10px; 
+			padding: 20px 20px  20px  10px;
+			width： 200px；/*为了使自动化 并且分栏分行  so 设置item宽  i但是每一行仍然有很多空间被浪费       
+			*/
+			flex-grow: 1; 			/*目标：设置一个最小宽  但是当有剩余时 剩余空间被元素分掉  flex-grow设置当有剩余空间时 每个元素抢占*/
+			flex-basic: 200px;   /*代替width 不管是垂直还是平行分布  都可以用这个设置基本宽或者高*/ 
+			/* flex: 1 0 200px; */			/*flex 是grow（增长因子） mhrimk（收缩因子）basic（基础大小）的简写  默认为 0 1 auto */
+			}
+		
+	</style>
+		<script>
+
+		</script>
+</head>
+<body>
+	<header>
+	<h1> test list to flexbox</h1>
+	</header>
+
+	<section  class="container">
+		<article><h2>article1</h2><pre>something  </pre></article>
+		<article><h2>article2</h2><pre>something  </pre></article>
+		<article><h2>article3</h2><pre>something  </pre></article>
+		<article><h2>article4</h2><pre>something  </pre></article>
+
+
+	</section>
+
+
+</body>
+</html>

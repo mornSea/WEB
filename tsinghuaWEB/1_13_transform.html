@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+		* {margin: 0; padding: 0; }
+/*
+
+transform 即变形（放大缩小 旋转）  作用于可变形元素
+一般是块元素  行内元素通过display：inline-block也可以变形
+
+如旋转是 transform： rotate（45deg） rotate（顺时针）旋转  45值 deg角度
+缩放scale      ---------： scale（0.4）  变成原来0.4大
+
+scalex（0.5） 只在x方向缩放0.5倍
+传入2参数时 即同时设置 
+
+translate是移动这个元素  值同上
+倾斜 skew  值是角度deg  默认为向左  	有x， y选项
+
+组合： 在元素中同时设置多个变形 容易级高的覆盖低的  
+但是可以在一条规则里面按 从右往左 顺序设置多个值 
+如 transform: scale(2) rotate(45deg); 旋转45度并且放大2倍
+
+transform-origin 设置进行上面这些操作时的基点  默认是元素中心
+值有 如 transform-origin ：left top  是左上角（关键字） 
+用百分百表示为 0% 0%  用像素为 0px 0px  （可以取各种值）
+
+
+
+*/
+
+img {transforn:rotate(45deg) scale(2);  transform：right bottom； }
+p {display: inline-block; transform: rotate(33deg)  translate(-50px); }
+
+
+
+
+
+
+	</style>
+		<script>
+
+		</script>
+</head>
+<body>
+
+<img src="http://terest.top/td.jpg" />
+<p>test</p>
+
+
+</body>
+</html>

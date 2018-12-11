@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+		* {margin: 0; padding: 0; }
+		.ball {
+			border-radius: 50%; 
+			position: absolute; 
+			width: 100px; 
+			height: 100px; 
+			background: brown; 
+
+		/*	animation: bounce 3s  linear  0s; */
+		}
+		.box {
+			margin: 0 auto; 
+			background: #eee; 
+
+		}
+
+		.box::hover .ball{
+			animation: bounce  4s  linear 0s;  
+		}
+
+
+
+
+/*js改变元素的位置/ui状态  实现球丢下去再弹起来  
+CSS中用keyframes + x% + left top来定义不同时间元素的位置
+应用的一般都是绝对定位  因为是根据原来位置的left top 改变元素 
+
+s每个时间下的状态叫关键帧   
+@keyframes 后面的是这一套动画名 如bounce  对应-namex属性
+
+怎么把动画绑定到元素？   在元素的css属性上面应用：
+animaion： bounce 4s linear 0s
+像transition一样  顺序：动画名 动画时长  速率  等待d时间
+
+
+动画y还有一个关键： 触发方法： 比如外部盒子hover
+注意 这时应该是  外部盒子的类：：hover   里面盒子的类 {animation： 。。。。。} 
+
+
+js同效果代码： 
+$0.style.left="200px"; $0.style.top="200px"; 
+
+$0.style.left="400px"; $0.style.top="0px"; 
+*/
+ 
+/* 和transition区别在于不只是单一的ui变化 */
+
+
+		@keyframes bounce{
+			0%   { left: 0; top: 0;  }
+			25%  { left: 200px; top: 200px; }
+			50%  { left: 400; top: 0px; }
+			100% { left: 600; top: 200px; }
+		}
+
+
+
+		</style>
+		<script>
+
+		</script>
+</head>
+<body>
+	<div>
+		<div class="ball"  id="0">
+
+	</div>
+
+</body>
+</html>

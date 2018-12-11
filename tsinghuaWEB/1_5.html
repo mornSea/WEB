@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+		* {margin: 0; padding: 0; text-align: center; }
+		ul {
+			background-color: aqua; width: 300px;
+		}
+		li {
+			background-color: lightblue; color: white;  
+			margin-bottom: 10px; height: 60px;  position: relative;
+		}
+		input {
+			/*float: right; margin: 20px 40px auto auto;  
+			width: 20px; height: 20px; */
+			/*方案一： 通过给input的选择按钮 float：right 浮动到父元素li的右边统一对齐  
+			设置大小， margin 右 顶 让其在input右侧偏中 */
+			
+		
+		width: 20px; height: 24px;  
+		position: absolute; top:20px; right: 40px; 
+		/*方案二： 父元素 relative + inputabsolute 设置top bottom */
+		/*下拉菜单可以通过 hover + absolute 实现*/
+		
+		}
+
+
+		button {
+		background-color: lightgrey;  
+		opacity: 0.4; position: fixed; 
+		right:30px; top: 70%; margin-top:-10px;   /*确定固定位置微调用边距的正负值*/  
+		}
+/*带（DIV  fixed:width/height100% 黑  opacity  ）遮罩层    并且始终在屏幕中心的fixed弹`出窗口  ： 使用50%固定定位fixed偏移量 + 负外边距*/
+
+
+		button::hover{
+			background-color: #EEE;   
+		}
+
+	</style>
+		<script>
+
+		</script>
+</head>
+<body>
+
+	<h2>check the book ; when you read the book<h2>
+	<ul>
+		<li>hello code<input type="checkbox" /></li>
+		<li>hello html5<input type="checkbox" /></li>
+		<li>hello javascript<input type="checkbox" /></li>
+		<li>hello css<input type="checkbox" /></li>
+
+	</ul>
+	<button  style="width: 60px; height:68px; ">反馈</button>
+
+</body>
+</html>

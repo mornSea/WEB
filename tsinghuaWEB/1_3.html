@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+div {
+	width: 100%; 
+/*	width: 1000px; */
+	margin: 0 auto; /*结合上面 定宽居中*/
+	background-color: lightgray; 
+	overflow: hidden; 
+
+}
+
+
+#p1 {width: 160px;  background-color: lightgrey; float: left; }
+
+#p2 {margin:auto  250px auto 170px;  width: auto;  background-color: #eee; }
+
+#p3 {margin-right: 10px;  width: 240px; background-color: lightblue; float: right; }
+
+#p4 {width: 00px; height: 00px; background-color: red; }
+
+
+/*中栏自适应 ：margin：0 auto 定宽居中 + 
+父容器自适应 width：100%  + 
+中栏 去浮动   width: auto;(自动根据父宽100% - 左右外边距计算) 
+左外边距=左元素+边距  右外边距=右元素+边距   + 
+右边元素右浮动并且html结构中放在中栏前面*/
+
+
+
+	</style>
+		<script>
+
+		</script>
+</head>
+<body>
+<div>
+	<p id="p1">p1</p>
+	<p id="p3">p3</p>
+	<p id="p2">p2</p>
+</div>
+
+
+
+</body>
+</html>

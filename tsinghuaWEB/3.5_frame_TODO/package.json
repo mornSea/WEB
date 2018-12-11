@@ -1,0 +1,12 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "test lication",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  	"build": "babel static -d output && browserify output/app/index,js > public/index.js && rm -rf output"
+  },
+  "author": "TODO",
+  "license": "ISC"
+}

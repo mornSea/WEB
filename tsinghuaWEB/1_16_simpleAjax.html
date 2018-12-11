@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+		* {margin: 0; padding: 0; }
+		body {margin : 0 auto; text-align: center; }
+	</style>
+		<script>
+			var buttons = documents.getElementsByTagName("button");
+			for (var 1 = 0; i < buttons.lenth; i++){
+				button[i].onclick = handleButtonPress;			
+			}
+			function hanButtonPress(e){
+				var httpRequest = newXMLHttpRequest()s;
+				httpRequest.onreadystatechange = handleResponse;
+				httpRequest.open("GET", e.taget.innerHTML + ".html");
+				httpRequest.send();
+			}
+
+			funtion handleResponse(e){
+				if (e.target.readyState == XMLHttpRequest.DONE && e.target.status == 200){
+				docment.getElementById("target").innerHTML = e.target.responseText;
+				}
+			}
+
+
+
+		</script>
+</head>
+<body>
+
+<div>
+
+<button>Apples</button>
+<button>Cherries</button>
+<button>Bananas</button>
+
+</div>
+
+<div id="target">press a button</div>
+
+</body>
+</html>

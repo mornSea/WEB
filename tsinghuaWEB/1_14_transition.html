@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+		* {margin: 0; padding: 0; }
+		div {
+			display: inline-block; 
+			width: 100px; 
+			height: 100px; 
+			font-size: 16px; 
+			color: #757575; 
+			background-color: lightblue; 
+			margin: 50px; 
+			padding: 10px; 
+			border: 2px solid  red; 
+		}
+	
+		div::hover {
+			background-color: #FF6688; 
+			width: 300px; 
+			border-width: 20px; 
+			border-style: dashed; 
+			transition-property: width,background-color,border-width,border-style; 
+			transition-duration: 3s 2s  5s;
+			transition-delay: 0.2s; 
+			transition-timing-function: ease； 
+		/*	transition： width,background-color,border-width  3s  linear 0.3s; */ 
+		}
+
+
+/* 
+
+transition  即样式改变的过渡效果 默认是立即改变
+transition后跟property 指变化属性；  all为给所有的添加过渡效果 
+后跟duration 指变化时间  
+每种类型都要加到property 用逗号隔开
+但是时间多个是用各自的 一个是通用
+
+不是所有的css属性都可以添加过渡效果 
+像border-style就不行
+
+transition-delay; 过渡前的等待时间  值同duration
+
+transition-timing-function:控制过渡时变化的速率
+值有几个关键字 linear均匀   ease-in慢->快  ease-in-out慢->快->慢 ease-out快->慢 ease默认 像in-outb不过加减速更加锋利
+以及自定义的函数曲线值
+
+
+简写： transition： width 4s linear 1s （顺序： 属性 时间 速率 等待）
+一个逗号前面算一套 几套之间用逗号分
+
+
+
+*/
+
+
+
+
+
+	</style>
+		<script>
+
+		</script>
+</head>
+<body>
+
+	<div>
+		hello div 1
+		hello div 1
+		hello div 1
+		hello div 1
+	</div>
+
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+		* {
+			margin: 0; 
+			padding: 0; 
+			}
+		.container {
+			width: 1200px; 
+			margin: 0 auto; 
+			background-color: #eee; 
+			/*display：flex会应用到弹性盒容器 （有多余空间 对其中内容弹性布局的元素）
+			box-flex：1会应用到具体元素  告诉浏览器哪些元素是弹性的  弹性容器里面不能包含浮动元素
+			具体的值决定分配空间的比例  box-align（应用到可伸缩容器上面 而不是m内容元素）
+			告诉浏览器如何处理多余的垂直空间 多余空间放到相反方向
+			默认垂直拉伸以填充  值有 start顶  end底  center平分 strech填充 
+			box-pack决定元素达到最大尺寸 多余空间仍然没有分配完是怎么办 ：
+			值 start从左开始  end  center*  justify均匀分配到各个元素
+			akign-content 设置是否把父元素高全部撑满 即默认撑满stretch  每一行均匀增加剩余高增加 
+			值为flex-start时 自动以通一g行最高值为f高   而align-item 则是设置每个内容元素对
+			对某个元素要特殊对齐  在g这个元素样式中使用 lalign-sself 
+
+			
+			
+			*/
+
+			
+			
+			
+			display: flex; 
+			justify-content: center; 
+
+			/*flex-direction: column; */
+
+		/*弹性盒子 + 水平居中 + 
+		媒体含义 不同处理  +  
+		order 取值小(默认0）时权重大 自动跳到前面  */
+		
+		/*	flex-content: column; */
+		/*	flex-ddirection: row-reverse; */
+		/*
+		flex 主轴：元素依次放入的顺序/方向  侧轴是与其垂直的
+		它的content取值为column是垂直方向从上往下
+		
+		flex-wrapq	取值：
+		column-reverse是顺序相反 
+		row-reverse是横-从右往左 
+		
+		*/
+			flex-wrap: wrap; 
+		/*flex-wrap : wrap 当屏幕大小变化  flex 会自动化根据定义的主轴变化
+		main size 是元素在主轴上面的大小（宽？） 
+		和closs size  元素在侧轴上面的大小（高）  
+		
+		是宽还是高 取决于 主轴方向
+		当元素一行放不下  自动化分行时 分的一行 叫  flex line 
+		但是当垂直时flex line 就是列
+
+		display ：flex/inline-flex时 使用弹性盒子布局
+		告诉浏览器 ：这个元素本身 会变成一个flex container 
+		将采用flex box布局算法  里面的子元素会变成flex items
+		
+		*/
+
+		
+		}
+
+		.box {
+			height: 100px; 
+			font-size: 50px; 
+			width: 100px; 
+		}
+		.box1 {background: #bdc3cc; }
+		.box2 {background: #2eccaa; }
+		.box3 {background: #16a022; /*order： -1；*/}
+		.box4 {background: #34ff66; }
+		.box5 {background: #f1c400; }
+		.box6 {background: #e67e22; }
+		.box7 {background: #e74ccc; }
+		.box8 {background: #1abcff; }
+		.box9 {background: #3498dd; }
+		.box10 {background: #9b59bb; }
+
+
+
+
+
+
+	</style>
+		<script>
+
+		</script>
+</head>
+<body>
+
+	<div class="container">
+		<div class="box  box1">1</div>
+		<div class="box  box2">2</div>
+		<div class="box  box3">3</div>
+		<div class="box  box4">4</div>
+		<div class="box  box5">5</div>
+		<div class="box  box6">6</div>
+		<div class="box  box7">7</div>
+		<div class="box  box8">8</div>
+		<div class="box  box9">9</div>
+		<div class="box  box10">10</div>
+	</div>
+
+
+</body>
+</html>

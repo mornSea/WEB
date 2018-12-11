@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+		* {margin: 0; padding: 0; }
+		table {border-collapse: collapse; }
+		th, td {padding: 4px; }
+		th {text-align: right; }
+
+	</style>
+		<script>
+			navigator.geolocation.getCurrentPosition(displayPosition);
+
+			funtion displayPosition(pos){
+				var properties = ["longitude", "latitude", "altitude", "accuracy", "altitudeAccuracy", "heading", "speed"];
+				for (var i = 0; i < properties.length; i++){
+					var value = pos.coords[properties[i]];
+					document.getElementById(properties[i]).innerHTML = value;
+				}
+				document.getElementById("timeStamp").innerHTML = pos.timestamp;
+			}
+
+
+		</script>
+</head>
+<body>
+	<table border="1">
+
+		<tr><th>Logitude:</th><td id="logitude">-</td>   <th>Latitude:</th><td id="lstitude">-</tr>
+		
+		<tr><th>Altiitude:</th><td id="altitude">-</td>   <th>Accuracy:</th><td id="accuracy">-</tr>
+		
+		<tr><th>Altitude Accuracy:</th><td id="altitudeAccuracy">-</td>   <th>Heading:</th><td id="heading">-</tr>
+		
+		<tr><th>Speed:</th><td id="speed">-</td>   <th>Time Stamp:</th><td id="timeStamp">-</tr>
+
+	</table>
+</body>
+</html>

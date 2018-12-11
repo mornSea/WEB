@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+	div {
+	width: 1000px; 
+	background: #AAA; 
+	}
+
+
+#p1{width: 100px; height: 200px; background-color:red;  float: right} 
+#p2{width: 100px; height: 400px; background-color: blue; float: right} 
+#p3{width: 100px; height: 1000px; background-color: lightblue;  float:right } 
+#p4{width: 100px; height: 100px; background-color: red; float: left} 
+#p5{width: 100px; height: 200px; background-color: blue;  float: right } 
+#p6{width: 100px; height: 400px; background-color: brown; /*clear: both*/} 
+#p7{width: 100px; height: 1000px; background-color: lightblue; float: left; } 
+#p8{width: 100px; height: 100px; background-color: red; float: right; } 
+#p9{/*clear: both; */} 
+#p10{width: 100px; height: 100px; background-color: yellow; } 
+	#div1{/*overflow: hidden; *//*float: left; */  }
+	#div2{background-color:lightblue; }
+	
+	#div1:after{content: "."; clear: both; display: block; visibility: hidden; width: 0px; }
+	/*添加虚拟子元素 并且clear：both 来让父div包围前面2个p元素   content是信息/值  
+	行元素不能设置宽和高 SO display：blog   visibility：hidden隐藏内容  是块所以可以设置width：0；  
+	完成了一个无实体  无大小 可以帮助父元素包围float子元素的伪元素  没有改变父元素的结构/布局*/
+	
+	/*可以抽象变成一个类:*/  .clearfix::after{content: "."; clear: both; display: block; visibility: hidden; width: 0px; }
+	
+	
+	</style>
+		<script>
+
+		</script>
+</head>
+<body>
+	<div>
+	<p id="p1"></p>
+	<p id="p2"></p>
+	<p id="p3"></p>
+	</div>
+	<br />
+	<div>
+	<p id="p4"></p>
+	<p id="p5"></p>
+	<p id="p6"></p>
+	</div>
+	<br />
+	<div  id="div1">
+	<p id="p7"></p>
+	<p id="p8"></p>
+	<p id="p9"></p>
+	</div>
+	<div id="div2">abcd</div>
+		<br />
+<div class="clearfix"><p id="p10"></p></div>
+
+
+
+
+</body>
+</html>
+
+
+
+
+

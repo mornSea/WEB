@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+div {width: 1000px; margin: 0 auto; background-color: lightgray; }
+#p1 {width: 100px; height: 200px; background-color: red; 
+	/*position: absolute; */
+	/*绝对定位之后 不像相对定位一样根据原本位置作为参照物移动(偏移)
+	而是从父元素往上找定位元素（position不是staic的） 
+	都没有 按浏览器视窗大小为参照物   fixed是以视窗 
+	前者窗口大小移动不动  后者页面滚动不动 
+	但是都像浮动一样从原来位置拿出来 不占结构空间
+	一般使用时绝对定位元素的父/祖先会有一个是如relative*/
+}
+#p2 {width: 200px; height: 100px; background-color: blue; 
+/*position: relative; left:20; top: 50; z-index: 3;*/}
+#p3 {width: 1000px; height: 40px; background-color: lightblue; 
+/*position: relative; z-index:1; */}
+	</style>
+		<script>
+
+		</script>
+</head>
+<body>
+
+<div>
+
+	<p  id="p1">p1</p>
+	<p  id="p2">p2</p>
+	<p  id="p3">p3</p>
+
+</div>
+
+</body>
+</html>

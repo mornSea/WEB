@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset = "utf-8" />
+	<style>
+/* 响应式设计有三宝： 流式布局 弹性媒体  媒体查询 
+另外 发展出了移动优先 的设计方法  
+以及CSS3 的transform transition animatio  最好都加上厂商前缀*/
+
+
+		* {margin: 0; padding: 0; }
+		html {font-family: sans-serif; }
+		.container {width: 86%; text-align: center;  background: #eee; overflow: hidden; }
+		nav, section{margin: 10px; height: 50vh; }
+		nav {background: lightblue; float: left; width: 16%; }		
+		/*vh vw 是相当于视窗的百分比值  类似于（元素及边距）用%  都是流式布局*/
+		section {background: lightcoral; float: left; width: 66%; }
+
+ 
+/* 媒体查询 与处理 主要思路：
+默认为最宽，当元素如小于1000px/680px时，中栏自适应 + 左右其中一/二栏放下面
+（最小）当屏幕小于X像素时， （中栏如果有大块）
+块级元素的float和width取消 变成上下叠加并且宽占据父元素的样式  */
+
+		
+		@media screen and(max-width: 600px){
+			nav, section {float: none; width: auto; }
+			nav {height: 240px; }
+		}	
+
+
+/*
+	移动优先： 默认为移动设备的布局  当屏幕宽时改变   这样在移动设备上面不用再 加载+改变了  由于是慢慢变宽 所以条件是min-width （>=）
+	css ruls mobile device....
+	@media screen and (min-width: 760px){
+		r1
+		r2
+		...
+	}
+
+	@media screen and (min-width: 960px){
+		r3
+		r4
+		...
+	}
+
+	@media screen and (min-width: 1280px){
+		r5
+		r6
+		...
+	}
+*/
+
+
+
+
+
+
+
+</style>
+	<script>
+
+		</script>
+</head>
+<body>
+
+<div  class="container">
+<nav class="nav">nav</nav> <!-- 通过设置max-width 可以实现弹性图片  让图片始终不会超过父元素-->
+<section class="section">section <br / ><img max-width="100%" src="http://www.terest.top/td.jpg" /></section>
+</div>
+
+</body>
+</html>
