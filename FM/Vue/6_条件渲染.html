@@ -1,0 +1,75 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+<!--
+	相比较与handlebrs模板 要这么写一个条件块：
+	{{#if ok}}
+		<h1>yes</h1>
+	{{/if}}	
+	
+	vue中只需要：
+-->
+<h1 v-if="ok">yes</h1>
+<h1 v-else>no!</h1>
+
+<template  v-if="ok">                			<!--用template让一个v-if控制多个元素    渲染后没有template元素-->
+	<h1>Title</h1>
+	<p>paragraph 1</p>
+	<p>paragraph 2</p>
+</template>
+
+
+<div v-if="Math.random() > 0.55" >
+Now you can see me
+</div>
+<div v-else-if="Math.random() % 2 = 0"> 		<!--v-else-if 在v-if后-->
+hello, see you agein
+</div>
+<div v-else>                      				<!--v-else  必须在v-if  或者v-else-if后面-->
+Now you don't
+</div>
+
+
+
+<template v-if="loginType === 'username'">		<!--用key管理可复用元素  避免重复渲染+（无跳转无申请）在不同状态间切换-->
+	<label>UserName</label>						
+	<input placeholder="Enter Your UserName">		
+</template>										<!--在这里是通过不同logintype切换模板  并且也不会清除用户之前输入-->
+<template v-else>
+	<label>Email</label>
+	<input placeholder="Enter your Email address">
+</template>										<!--甚至看起来input都没换  只是改了它的placeholder值-->
+
+
+
+<template v-if="loginType === 'username'">		<!--有时这不符合实际需求  so 用key表示‘这元素是独立的  不要复用’-->
+
+	<label>UserName</label>						
+	<input placeholder="Enter Your UserName"  key="username-input">		
+</template>										<!--input重复渲染  清除用户之前输入-->
+<template v-else>
+	<label>Email</label>
+	<input placeholder="Enter your Email address"  key="email-input">
+</template>										<!--至少label还是被复用了-->
+
+<h2 v-show="ok">World</h2>						<!--带v-show的元素始终渲染并且保留在DOM v-show切换元素的display   它不支持template  v-if-->
+
+
+												<!--相比较v-if才是真正的条件渲染  并且是 惰性的    但是和v-for一起后者优先 没有惰性特性-->
+
+
+
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+</script>
+</html>

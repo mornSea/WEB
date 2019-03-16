@@ -1,0 +1,151 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+		Axios：	基于Promise的http库（除了Ajax 拦截/取消请求/数据 还能： 转换请求/响应数据  自动转换json 防御xsrf）
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+	//工具类封装
+	import axios from 'axios';
+	const httpService = axios.create({						//创axios实例
+		baseURL: peocess.env.BASE_API.						//api前缀 域名/api/
+		timeout:3000										//超时时间
+	})
+
+	httpService.interceptors.request.use(					//request拦截器
+		config => {											//根据条件加入token -安全携带
+			if(true){										//自定义条件
+				config.headers['User-Token'] = '';			//让每个请求携带token
+			}
+			return config;
+		},
+		error => {									
+			Promise.reject(error);							//请求处理错误
+		}
+	)
+
+	httpService.interceptors.response.use(					//respon拦截器
+		response => {										//统一处理状态
+			const res = response.data;
+			if (res.statuscode ! = 1) {						//自定义连接代码为错后处理
+					return Promise.reject({					//返回异常
+						status: res.statuscode,
+						message: res.message
+					});
+			} else {
+				return response.data;
+			}
+		},
+		error => {											//处理异常
+			if (error && error.response){
+				switch (error.response.status){
+					case 400:
+						error.message = '错误请求'；
+						break；
+					case 401:
+						error.message = '未授权 请确认登录'；
+						break；
+					case 403：
+						error.message = '拒绝访问'；
+						break;
+					case 404:
+						error.message = '请求错误 未找到资源'；
+						break；
+					//...
+					default:
+						error.message = `未知错误 ${error.response.status}`;  //注意 这要用模板符号引用数据
+				}	
+			}else{
+				error.message = '连接服务器失败'；
+			}
+			return Promise.reject(error);
+		}
+	)
+
+
+	export function get(url, params = {}){							//网络请求 （get post url params）
+		return new Promise({resolve, reject} => {
+			httpService({
+				url: url,
+				method: 'get',
+				params: params
+			}),then(response => {
+				resolve(response);
+			}).catch(error => {
+				reject(error);
+			});
+		});
+	}
+
+	
+	export function post(url, params = {}){
+		return new Promise({resolve, reject} => {
+			httpService({
+				url: url,
+				method: 'post',
+				data: params										//post的params改为data
+			}),then(response => {
+				resolve(response);
+			}).catch(error => {
+				reject(error);
+			});
+		});
+	}
+
+	
+
+	export function fileUpload(url, params = {}){					//post文件上传  
+		return new Promise({resolve, reject} => {
+			httpService({
+				url: url,
+				method: 'post',
+				data: params,
+				headers: {'Content-Type': 'multipart/form-data'}	//加入了文件类型： 多部分/表单数据
+			}),then(response => {
+				resolve(response);
+			}).catch(error => {
+				reject(error);
+			});
+		});
+	}
+	
+	export default {
+		get,
+		post,
+		fileUpload
+	}
+
+
+
+	//使用：
+	import fetch from '@/util/fetch'									//引入工具类 目录随意
+	
+	const TMPURL = '';													//url地址
+	const params = {};													//参数
+	fetch.post(TMPURL + '/login/login', params);						//调用
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</html>

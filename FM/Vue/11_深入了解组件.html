@@ -1,0 +1,165 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+
+
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+//js的Vue里用kebab-case（短横线命名）：全小写用-相连不同词    而在HTML用PascalCase（驼峰命名法）
+		
+//组件注册
+	//全局注册是Vue.component('组件名', {/* ... */})     可用于任何新建Vue根实例（new Vue）的模板  各自内部/互相   但是不用的也会加入js      
+	//局部注册是通过js对象 var 组建名A = {/* ... */}	  然后在Vue的components属性定义要的组件:
+		new Vue({ 
+			el: '#app',  
+			components: {
+				'组件-a' ： 组件A，	
+			}
+		})
+		//局部注册的组件在其子组件中不可用  如果你要组件A在组建B 里可用  组件b 要这么写：
+		vat 组建名B ：= {									//Es2015格式:     import  组件名A form './组件名A.vue'
+				components: {								// export default {   components:{
+						'component-a' : 组件名A				//							组件名A  
+				}，											//						}，
+				//，，，									//			// ，，，
+		}													//	}		
+		//如果在模块系统里  应该建立一个component目录每个组件单独放各自文件里
+		//常用的基础组件可在webpack用 require.context  只全局注册这些      （全局注册必须发:生在用它的Vue实例创建前）
+
+	
+
+
+//Prop
+	//一般用数组形式 props：['a', 'b', 'c']；如希望每个prop都指定值类型 以对象形式列出prop    props： {prop名1：‘类型1’， prop名2：‘类型2’}
+	//给prop静态传值  <blog-post title="My journey with Vue"></blog-post>  
+	//给prop动态传值（v-bind）  <blog-post v-bind:title="post.title"></blog-post>  
+	//给prop动态传复杂表达式值  <blog-post v-bind:title="post.title + ‘by’ + post.author.name"></blog-post>  
+	
+	//但是这只是字符串 任何类型多可以传入 （前加v-bind） <blog-post v-bind:value="[23, 45, 65]“ 或者”{name：value}">   用“类名”传入所有属性 
+	
+	//单向数据流： 父级的更新会流动到子组件  但是不会反过来   so 不应该在子组件内改变prop       
+	//有验证函数的对象prop  props：{ propF ：{alidator： function（value）{return ['sussess', 'warning', 'danger'].indexOf(value) !== -1} }}
+
+
+
+
+//自定义事件		
+	//父组件用prop传数据给子组件  而子组件用$emit触发父组件的自定义事件
+
+	//事件名没有大小写转换   而是触发的事件名要完全匹配监听事件用的名字 比如：
+		//this.$emit('myEvent') 触发  <y-component v-on:my-event="dosomething">  在组件里监听这个名字的kebab-case版本没有效果
+		//由于在DOM里会全转为小写 so 应该始终用kebab-case的事件名
+	
+	//自定义组件的v-model： 默认会利用名为value的prop 和名为input的事件 但是不同输入控件会用value用于不同目的 
+		//组件中的model属性可避免这种冲突： model：{prop： ‘cheked’， event：‘change’}   
+		//template： `<input type="checkbox" v-bind:checked="checked" v-on:change=$emit('change', $event.target.checked)>`
+		//使用上面定义的组件：<base-checkbox v-model="lovingVue"></base-checkbox>  
+		//这个lovingVue 传入 checked (一个prop)     当这个组件触发一个change事件并附带一个新的值时  lovingVue会被更新   （props中声明check）
+
+	//将原生事件绑定到组件：（如在组件根元素上监听） 可用v-on的.native修饰符 但是在类似input的特定元素时  不太好  如重构是的元素上会静默失败
+		//为此 Vue推出了 $listeners 属性  是一个对象 里面包含作用在此组件上的所有监听器  配合v-on将所有事件监听器指向这组件某个特定子元素
+	
+		
+		//.sync修饰符： 有时 我们想对一个prop双向绑定 但这违反了‘子不能改变父’的规则  
+		//so 推荐用this.$emit（’updata: title‘， newTitle）触发；  
+		//再让父监听那个事件 并根据需要更新一个本地数据 <smt v-bind:title.sync="doc.title"> </smt>
+  		//注意： 带有sync的v-bind不能与表达式一起用  另外， 用一个对象同时设置多个prop时 也可以sync+v-bind一起用：
+		//<smt v-bind.sunc="doc"></smt>    会把doc每一个属性作为一个peop传入 各自添加用于更新的v-on监听器
+
+
+//插槽:  
+	//将<slop>元素作为承载分发内容的出口
+		//像这样合成组合： <nav-link url="/ptofile"> your profile</nav-link>
+		//<nac-link>模板中写： <a v-bind:href="url" class="navLink"> <slot><slot> </a>
+		//渲染时slot会被替换成your profile  插槽 内可以包含任意模板代码 ，HTML，其他组件，，，  但是如果没有包《slot》  这组件内内容抛弃
+		//编译作用域：插槽跟模板其他地方一样可以访问实例属性 但不能访问到nav-link  如其中url就不行  父/子模板所有内容都是在父/子作用域编译的
+
+	//后备内容(默认值)： 写在两个slot中  保证组件一定会渲染出来
+	
+	//具名插槽： 一个组件内组合多个插槽时  slot可以有一个属性：name  定义额外的插槽  默认name：default， 
+		//向具名插槽提供内容时 在<template>元素上使用v-slot指令 以其参数提供名称   从v-slot缩写为： #
+
+	//动态插槽名：  也可以用上动态指令参数了  如 <template v-slot:[dynamicSlotName]>
+ 	
+	//插槽prop： 将插槽转化为可复用的模板 这些模板基于输入的prop渲染出不同内容  （尤其在封装数据逻辑同时允许父级组件自定义部分组件布局时）
+		//如一个todolist组件 是一个列表并包含布局和过滤的逻辑  将每个todo作为一个插槽prop来绑定 （在v-for里 《slot v-bind：todo=“todo”》）
+		//就这样，为每一次循环中的索引todo准备了一个插槽 将todo对象作为一个插槽的prop传入   而本来的内容todo.text成为默认值  
+		//现在用todolist组件时 可选择为todo定义一个不一样的template作为替代方案  并且可从子组件获取数据：
+		//<todo-list v-bind:todos="todos"><template v-slot:todo="{slot}"><span v-if="todo.isComplate">{{ todo.text }}</tamplate></todo-list>
+
+
+
+
+
+//动态组件·异步组件
+	//在动态组件上使用keep-alive：  
+		//之前在多标签页面用v-bind：is特性来切换不同组件 这时也许可以保存组件状态  避免重复渲染   可以将组件包在一对《keep-alive》里
+		//keep-alive 要求被切换到的组件都有自己的名字 无论是通过组件的name 还是局部/全局的注册
+	
+	//异步组件
+		//Vue允许你以一个工厂函数的形式定义自己的组件 会异步解析你的组件定义  只有在其需要渲染时 才触发这个函数 并把结果缓存起来供未来重渲染
+			Vue.component('async-example', function(resolve, reject) {
+				setTimeout(function(){
+					resolve({			//向 ‘resolve’ 回调传递组件定义  这个回调会在从服务器得到组件定义时被调用
+							template: '<div>I am async</div>'
+					})
+				}, 1000)
+			})							
+			//一般是将异步组件和webpack的code-splitting一起  
+				Vue.component('async-webpack-example', function(resolve) {		//这个特殊的require会告诉webpack：
+					require(['./my-async-component'], resolve)					//自动将你的构建代码切割为多个包 并通过Ajax 请求加载
+				})																//也可以在工厂函数里返回一个pomise  再加上webpack与ES5
+			//在局部注册时 可以直接提供一个返回pomise的函数     如：components ：（‘my-component’: () => import ('./my-async-component')）
+			//还能处理加载状态  用异步组件工厂函数返回一个对象 包含： 加载时/出错时显示的组件  超时/延时的时间设置
+
+
+
+
+
+
+//处理边界情况：
+	//访问元素/组件：
+		//在vue中在每个 new Vue 实例的子组件中，其根实例可以通过 $root 属性进行访问   		（就像DOM 中的docment）
+        //所有子组件通过 $root 属性把根实例作为一个全局store访问： this.$root.foo            (foo是此根实例下data对象的一个属性)
+        //而 $parent 可以用来从子组件访问父组件  this.$parent.someson   但是从子到父会导致更难调试和理解   so推荐依赖注入  
+		//访问子组件/子元素用 $ref 可以通过ref特性为子组件赋值个id引用: <smt ref="username"></smt>  在已定义ref的组件里: this.$refs.username
+	
+	//依赖注入：  （可看成大范围有效prop）
+		//如一个页面所有google-map组件后代都要访问getMap方法 以便知道要和那个组件交互 但是用 $parebt 无法扩展到更深层级的嵌套组件 so有了这个
+		//它包括两个新的实例选项 provide 与 inject：
+			//provide允许我们指定提供给后代的数据/方法   		provide： function（）{retuen {getMap：this.getMap}}
+			//然后在任何后代组件里 用inject接受指定的属性并添加在这个实例上   inject：['getMap']
+		//依赖注入缺点： 组件耦合厉害  难重构
+
+	//程序化的事件监听器：（除了用$emit  被 v-on监听）
+		//通过 $on（eventName，eventHandler）监听一个事件   $once 是一次性  $off 是停止监听
+		//可以在生命周期内 清理建立的东西   用程序化的监听器 可让多个元素同时使用不同的库组件 并每个新的实例都程序化的在后期清理自己
+		//this.$once('hook: smts', function(){/*组件清理函数*/})   最好的方式是创建更多的模块化组件 
+
+	//循环引用：
+		//递归数组：组件可在模板的name中调用自己（全局注册时 全局的id 设置为该组件的name）容易无限循环  so 要递归时要保证是条件调用 如v-if
+		//组件间循环引用： 全局注册时不存在 而用模块系统时会报错  
+			//解决：找到产生悖论的组件 等到生命周期钩子beforeCreate时去注册它  或者   本地注册组件时 用webpack的异步import
+
+	//模板定义替代品：
+		//内联模板： 当 inline-template 特性出现在一个子组件上时 这个组件会使用里面内容为模板 而不是被分发的 	（定义在Vue所属的Dom内）
+		//X-Template： 在script元素里 带上text/x-template类型  再通过一个id 将模板应用过去  					（定义在Vue所属的Dom外）
+
+	//控制更新：（当你用对了Vue时一般不用）
+		//强制更新： （你犯错了 如没有对数组/对象变更做检查 用了一个不被追踪的状态）  用 $forceUpdata
+		//低开销的静态组件： （大量静态内容要渲染时） 在根元素上添加v-once确保只计算一次并保存  <div v-once>/*...*/</div>
+
+
+ 
+</script>
+</html>

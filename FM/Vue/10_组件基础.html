@@ -1,0 +1,245 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+		<div id="components-demo">										<!--复用简单粗暴-->
+			<button-counter></button-counter>
+			<button-counter></button-counter>
+			<button-counter></button-counter>
+			<button-counter></button-counter>
+		</div>
+
+
+		<blog-post title="my journey with Vue"></blog-post>				<!--Prop用于 thml标签中 或者 post 传字符串-->
+		<blog-post title="bolgging with me"></blog-post>
+		<blog-post title="why Vue is fun ?"></blog-post>
+		<blog-post title="it's simple  and  clear"></blog-post>			<!--props 是特性 像size  所以注册后可传值-->
+		<blog-post title="the life is shut, i ues Vue"></blog-post>
+
+		<blog-post
+			id="blog-post-demo" 										//通过id-el绑定   (也就是说posts只有这个有？) 
+			v-for="post in posts" 
+   			v-bind:key="post.id"										
+			v-bind:title="post.title"									//{用v-for动态传递[v-bind绑定的(props定义的title)]} 
+		></blog-post>
+
+
+			<div id="blog-posts-events-demo">
+				<div :style="{ fontSize: postFontSize + 'em' }">		<!--{js里[emit事件修改的(data中postFontSize)]}绑定为style中font-->
+						<blog-post
+							v-for="postin posts"
+	   						v-bind:key="post.id"
+	   						v-bind:post="post"
+	   						v-on:enlage-text="postFontSize =+ 0.1"		//博文组件用v-on监听内建$emit传入的方法  就像监听一个普通DOM
+							//v-on:enlarge-text="postFontSize += $event"		//或者用$event访问抛出的值
+	   						//v-on:enlagee-text="onEnlageText"			//或者事件处理函数是一个方法
+							
+						></blog-post>
+				</div>
+			</div>
+
+
+		<input v-model="searchText">	<!-- 等价于-->		<input v-bind:value="seachText"   v-on:input="searchText=$event.target.value">
+		
+		<!--<custom-input													//model这种形式用在组件时 假想是这样   组件模板中的input必须满足：
+			v-bind:vlaue="searchText"									//1，value特性绑定在名叫value的prop上
+		 	v-on:input="searchText = $event"							//2，input事件触发时 新的值通过自定义的input事件抛出
+			>-->
+
+		<custom-input v-model="searchText"></custom-input>
+
+		
+		
+		<alert-box>someting bad happened</alert-box>					<!--要在内容前加入文本/设置style  可用插槽<slot>分发内容-->
+
+		
+																		<!--通过vue自带<component>和is特性实现动态组件:不同组件间动态切换-->
+		<component v-bind:is="currentTabCompontent"></component>		<!--组件在curr...这个特性改变时改变 特性可包括组件名 组件选项对象-->
+
+
+
+
+
+
+
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+		//组件是可复用的Vue实例  要给它定义一个名字  在通过new Vue创建的Vue实例中 把这个组件当自定义html元素用
+		//接收与new Vue相同的选项 如 data（必须是个函数）computed， watch， methods， 生命周期钩子等， el例外：根实例特有
+
+Vue.component('button-counter',{
+	data: function() {																		//以免影响其他所有实例
+			return {
+			count: 0
+			}																				//templet由于html常用""做赋值  so一定用''
+	}, 																						
+		templet: `<button v-on:click="conut++">clicked me {{ count }} times.</button>`		//就是把常用html和数据逻辑写进templte与data
+})
+
+
+new Vue({el: 'components-demo'})										//上面只是定义了组件  具体寄托于的Vue根实例  以及绑定   要在后面定义
+
+		//通常一个应用以嵌套的组件树来组织  比如head side  mian各个组件 每个又包含 a，textarea， button  
+		//为了能在模板里使用  组件必须先注册 便Vue识别 分两种:全局/局部        前面的例子是通过 Vue.component 全局注册
+		//全局注册的组件可用在其被注册之后任何Vue根实例  也包括组件树中所有子组件模板中；     像没有提升的全局变量
+
+		//相比常规Vue不同： 1，Vue第一参数在括号内 为字符串形式的组件名   2，有template定义html   3，后面（全局）中用new Vue（{el}）创建  
+
+
+
+
+		
+Vue.component('blob-post'， {										
+	props: ['title'],												//props定义
+	template: `<h3>{{ title }}</h3>`
+})
+
+new Vue({															
+	el: '#blog-post-demo',											//通过id绑定的元素是个组件  顺便创建组件  +  此m绑定组件中这个id的元素
+		
+	data: {
+		posts: [													//props定义了title这一属性  data里创个数组  在html中用v-bind绑定
+			{ id: 1, title: 'ABC' }, 
+			{ id: 2, title: 'DEF' }, 
+			{ id: 3, title: 'GHI' }, 
+		]
+	}
+})
+		//Prop是可以在组件上注册的自定义特性  当值传给Prop时 变成组件实例的属性   组件的Prop数量/值类型任意  用[]多为长字符串 大文件
+		//如数组版data一样 其中的元素prop是组件可接受的值   prop可像data一样使用      常用于向子组件传数据
+
+
+new Vue({															//通过事件向父组件发信息
+	el: '#blog-posts-events-demo',
+	data: {
+		posts: [/*...*/],
+		postFontSize: 1												//在父组件中添加  (可访问)控制文字大小的数据属性
+	}
+})
+
+Vue.component('blog-post',{											//在前面props定义的例子里  正文前添加个控制字号的按钮
+	props: ['post'],
+	template:
+		`<div class="blog-post">
+			<h3>{{ post.title }}</h3>
+				<button 
+					v-on:click="$emit('enlage-text')"				//按钮用内建的$emit方法传入事件名  向父级组件触发事件
+					//v-on:click="$emit('enlage-text', 0.1)"		//$emit第二参数提供一个抛出的值  可通过$event访问到	
+					//
+					//methods: {
+					//	onEnlageText: function (enlageAmount){		//定义一个方法为事件处理函数
+					//		this.postFontSize += enlageAmount		//抛出去的值作为第一参数传入此方法
+					//}
+					//}
+
+				>Enlarge text</button>				
+			<div v-html="post.content">
+		</div>`
+})
+
+
+Vue.component('costom-input', {										//自定义组件的model绑定
+	props： ['value'],
+	template:
+		`<input 
+			v-bind:value="value" 									//value特性绑定到叫“value”的prop
+			v-on:input="$emit('input', $event.target.value)"		//模板中input上面事件触发时 新值通过自定义input事件抛出（$emit第二参数）
+		>`
+})
+
+
+
+
+Vue.component('alert-box',{
+	template: 
+		`<div calss="demo-alert-box">
+			<strong>Error</strong>
+			<slot><slot>											//插槽<slot>：  应该就是把html里组件中的内容插入组件中指定内容
+		</div>`
+})
+
+
+//解析DOM模板时要注意的： 如ul，ol，table  和li， tr， option对什么元素可出现在内/其外部有严格限制 ，这时用组件会出现提升到外部 并渲染出错  
+
+//幸好前面的is特性给了一个变通的方法： 如<table><tr is="blog-post"></tr></table>  即把一元素定义为一个组件
+
+//另外 从 字符串template:‘...’ / 单文件组件（xx.vue）/ <script type="text/x-template">  时 这条限制不适用
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</html>

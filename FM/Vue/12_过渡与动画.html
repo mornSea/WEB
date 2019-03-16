@@ -1,0 +1,58 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+
+
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+//进入/离开&列表过渡
+	//Vue在插入/更新/移除时 提供多种方式应用过渡效果： CSS，钩子函数中用js操作DOM ，CSS/js库
+	//单元素/组件的过渡：
+		//Vue有transition的封装组件 在用v-if/v-show/动态组件/组件根节点时 可以给其中的元素添加进入/离开的过渡 如没有CSS和js钩子按浏览器动画
+		//过渡的六个类名：v-enter进入过渡时开始状态 v-enter-active进入过渡生效时的状态（定义过渡时长，延迟，曲线函数） 
+			//v-enter-to进入过渡的结束  v-leave离开过度的开始  v-leave-active同上  v-leave-to同上
+			//也可以enter/leave为前缀 以class/active-class/to-class为后缀 自定义过渡的类名 并可结合如Animate.css
+			//为了知道过渡/动画的完成  要设置事件监听器 transitionend / anomationend  在transition组件上的dutation可定制过渡时间(总体/分别）
+			//可在组件的属性中设置钩子 （如 v-on：enter=“MyEnter”）然后在js中定义MyEnter  只用js过渡时 enter和leave中必须用done回调
+
+		//多元素的过渡：（常见于列表和描述列表中一元素为空）
+			//对原生标签用v-if / v-else   当多个相同标签名元素切换时 要用key设置Vue用的id值以便区分  transition最好也设置一个
+			//也可以通过key不同状态替代v-if/else  还可将每个元素一个v-if的过渡重写为绑定动态属性的当个元素
+			
+		//过渡模式： transition默认进入离开同时发生有时不能满足 so 加入模式（mode：）in-out 先过渡新元素  / out-in 先过渡当前元素
+
+		//多组件过渡：不用key 只要用动态组件  <component v-bind:is="CTC"></...>  其中CTC 可是已注册组件/组件选项对象
+
+		//列表过渡： 用transition-group组件  其中用v-for + 内部元素要key   并且过渡模式不可用 但可用v-move改变定位 便于设置切换时机/过渡曲线
+
+		//FLIP： Vue的动画队列 用transforms将位置平滑过渡到新位置（可多维）使用FLIP的元素的display不能是inline 可是inline-block 或者在flex里
+
+		//过渡的复用:将transition/-group作为根元素of模板 然后把子组件放在里面(slot）或用函数构造：data中设置类名 过渡模式 钩子 然后构造出来
+
+		//动态过渡： 如通过name特性绑定动态值  所有过渡都可以动态绑定 （组件状态 事件 钩子）  最好通过props动态修改之前过渡
+
+
+
+
+
+//状态过渡(数据元素本身的动效   如：数/色/SVG/元素大小的 数值)：
+	//通过侦听器可监听任何数值属性的值更新 在配合GteenSock / Tween / Color / fiddle 等js库 可实现数/色的动画
+	//动态状态过渡： 数据的状态过渡也会实时更新  如svg 限制点数和点的里外边距 用一个无限loop可实现一个不重复的多边形动画
+	//可以把很多动画放到专用的子组件里  降低复杂度  
+
+	//赋予设计生命： 用几个logo/吉祥物的不同状态的svg  用Vue做状态之间的过渡动画      还可以结合时间和交互有动画与声音
+	
+
+
+</script>
+</html>

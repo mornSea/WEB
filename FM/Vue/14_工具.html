@@ -1,0 +1,118 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+
+
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+//单文件组件
+	//在复杂的 只由js驱动的项目里 用Vue.component 定义全局组件，再new Vue({el: '#container'})在每个页面指定容器元素 这种做法不适用
+	//为此  用.Vue的单文件组件  ：  分别定义模板（comminJS模块）  逻辑（vue）  样式（组件作用域）还可以Vue文件用src引用js/css文件 且推荐cli
+
+		<template> 
+			<p>{{ greeting }}</p>
+		</template>
+	
+		<script>
+			midule.exports = {
+				data: function() {
+					return {
+						greeting: "hello world !"				
+					}
+				}
+			}
+		</script>
+
+		<style scoped>
+			p{
+				font-size: 2em;
+				text-align: center;
+			}
+		</style>
+
+//单元测试
+	//断言 expect   （导出原始设置）				
+	descript ('MyComponent', () => {				
+		it('has a created hook', () => {
+			const vm = new Vue(MyComponent).$mount()					//检查mount中组件实例
+			export(typeof MyComponent.created).toBe('function')			//检查原始组件选项
+		})
+	})
+
+	//如果某组件的渲染输出完全由props决定  会让测试容易  可以在不同props里通过propsData选项断言渲染输出
+		//先在函数中声明：
+		const Constructor = Vue.extend(Component)
+		const vm = new Constructor({ propsData: propsData }).$mount()
+	
+		//在Vue异步更新DOM时 依赖DOM更新结果的断言必须在Vue.nextTick回调中进行:Vue.nextTick( () => {expect(vm.#el.textContent).toBe('foo') )
+
+
+
+
+//ts支持
+	//配置： tsconfig.json
+	{
+		"comilerOption":{
+			"target": "es5",		//与Vue浏览器支持相同
+			"strict"： truem,		//对this上数据进行严格推断
+			"module": "es2015",		
+			"moduleResolution": "node"
+		}
+	}
+
+	//Vue Cli里用ts生成新工程：
+		vue create my-project-name  //并选择manually select features（手动选择特性）
+
+	//要让ts推断Vue组件选项类型 要用Vue.component  /  Vue.extend 定义组件：
+	const Component = Vue.extend({})
+		
+	//vue-class-component装饰器：用基于类的API来 声明组件
+	@Component({					//这个装饰符注明这是一个Vue组件
+		template: '<button @click="onClick"> Click </button>'		//这可以放all组件
+	})
+	
+	export default class MyComponent extends Vue{
+		message: string = "hello"		//初始数据直接声明为实例的属性
+
+		onClick (): void {				//组件方法也可以直接声明为实例方法		ts要像c一样声明有无返回值
+			window.alert(this.message)
+		} 
+	}
+
+	//模块补充： 声明一个string类型的实例属性 $myProperty    然后可以在Vue的实例里使用它
+	declear module 'vue/types/vue' {
+		interface Vue {
+			$myProperty: stying
+		}
+	}
+	
+	//为了方便ts推断方法类型 要在render / computed 的方法标注返回值   就像变量基本也都用const   用--noImplicitAny找未标注方法
+
+
+
+
+
+
+//生产环境部署(如果你用vue-cli的话 下面这些默认开启的）
+	//用构建工具： （都会根据process.env.NOOE_ENV 决定是否用生产环境模式  默认用）
+		//webpack用mode:    module.exports = { mode: 'peoduction' }   Beowerify用NODE_ENV  ;  Gulp用envify
+		
+	//模板预编译：用DOM内/js的字符串模板时 模板会编译为渲染函数  要求跟快的用单文件组件 或者webpack + 分离js 模板 + template + loader
+
+	//提取组件CSS：单文件组件时 里面CSS以style标签 通过js动态注入  可以通过上行最后 或者Browerify + vueify提取到同一个文件（尤其服务器渲染）
+	
+	//跟踪运行时错误： 组件渲染出错时 用Vue.config.errorHandler 钩子函数来配合错误跟踪服务 如Sentry
+	
+
+</script>
+</html>

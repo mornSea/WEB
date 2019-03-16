@@ -1,0 +1,110 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+<div id="example-1">
+	<button v-on:click="counter += 1">Add 1</button>				<!--可用v-on指令监听DOM事件 在触发时运行一些js-->
+	<p>the buttonabove has been clicked {{ counter }} times. </p>
+</div>
+
+
+<div id="example-2">												<!--另一些更加复杂的写在指令中不行  so调用方法-->
+	<button v-on:click="greet"> Greet </button>				
+</div>
+
+<div id="example-3">
+		<button v-on:click="say(good morning)">Say hi</button>
+i		<button v-on:click="say(beautiful)">Say name</button>		<!--在内联中调用方法-->
+
+<button v-on:click="warn('Form cannot be submittedyet', $event)">	<!--有时要在内联处理中访问原始DOM事件 可把特殊变量 $event 传入方法-->
+Submit
+</button>
+</div>																
+
+																	<!--修饰符是 点开头的指令后缀  按顺序  不同顺序不同作用-->
+
+<a v-on:click.stop="doThis"><a>										<!--阻止事件传播-->
+
+<form v-on:submit.prevent="onSubmit"></form>						<!--提交事件不再重载页面-->
+qi
+<a v-on:click.stop.prevent="doThat"></a>							<!--可串联-->
+
+<form v-on:subit.prevent></form>									<!--可只有修饰符-->
+
+<div v-on:click.capture="doThis">...</div>							<!--同时使用事件捕获 元素自身触发事件先在此处理 再交由内部元素处理-->
+
+<div v-on:click.self="doThat">....</div>							<!--只有event.target是元素自身时才触发处理函数  内部元素触发不了-->
+
+<a v-on:click.once="doThis"></a>									<!--只触发一次     不像上面的 只能对原生DOM 这个可用于自定义组件-->
+
+<div v-on:scroll.passive="onScroll">..</div>						<!--即使preventefualt 还是不等待onScroll完成 直接触发滚动事件默认事件-->
+
+<div v-on:scroll.passive>. .</div>									<!--passive针对addEventListener提升性能 不阻止默认行为 但忽视.prevent-->
+
+<input v-on:keyup.13="submit">										<!--监听键盘 值为设置的(13)才触发 为常用如enter tab 等提供别名 -->
+
+<input @keyup.page-down="onpageDown">								<!--@为v-on:缩写 处理函数仅在$event.key==='pageDown' 时被调用-->
+
+<input @keyup.alt.67="clear">										<!--Alt+C  这是系统修饰符  67为‘C’的ascll值-->
+
+<input @click.ctrl="do-smt">										<!--与常规按键不同 与keyup一起用时事件触发器必须处于按下状态 -->
+
+<button @click.ctrl.exact="onCrtlClick">							<!--只有Ctrl按下才触发 .exact修饰符组合触发事件 单用无修饰符才触发-->
+
+<button @click.middle="dsmt">										<!--鼠标修饰符 还有left right  限制处理函数仅响应对应鼠标按键-->
+
+<!--vue事件方法与表达式绑定在viewmodel 用@好处：看html方便定位js方法 不用在js手动bind viewModel纯逻辑易测试 事件处理器随viewmodel销毁 -->
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+var example1 = new Vue({
+	el: "#example-1",
+	data: {
+		counter: 0
+	}
+})
+
+var example2 = new Vue({
+	el: '#example-2',
+	data: {
+		name: 'Vue.js',
+	},
+	methods: {														//vue需要在nethods中定义方法
+		greet: function(event) {									//event是原生DOM事件
+			alert('Hello' + this.name + ‘!’)						//'this' 在方法里指向当前Vue实例
+				if(event){
+					alert(‘event.taret.tagName’)
+				}	
+		}
+	}
+})
+example2.greet()  													// ‘hello Vue.js’ , 'Button'  可在js直接调用  
+
+
+new Vue({
+	el:  'example-3',
+		methods: {
+			say: function(message){
+				alert(message)
+				}
+				marn: function(message, event){						//传入的代表原始DOM事件的$event变量在方法的参数里用event接受
+					if (event) event.preventDefault()				//这个方法阻止元素默认行为  而stopPropagation（）阻止事件传播
+					alert(message)									//尽量方法只处理纯粹的数据逻辑  而不处理DOM事件细节 用v-on事件修饰符
+				}
+})
+
+
+
+
+
+
+
+</script>
+</html>

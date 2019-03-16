@@ -1,0 +1,77 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+
+
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+//computed : 计算属性 主要对原数据进行输出改造（格式化如价格/重量/日期 大小写转换 排序 添加符号）
+	computed: {
+		newPrice() {
+			return '￥' + this.price + '元'
+		}
+	}
+
+//methods ：方法属性  绑定html事件对应方法、	
+	method： {
+		add(num) {
+			this.count += num
+		}
+	}
+
+//watch: 数据变化监听器 监测data中数据变化 使v-model生效 （改变视图）
+	watch: {
+		question(val, oldVal){
+			console.log('new: %s,  old: %s,  val, oldVal');
+		}
+	}
+
+//filters: 过滤器 通常格式化字符 用于传值
+	filters: {
+		filterA(value){
+			return value.toUpperCase();
+		}
+	}
+
+//mixins: 混入  减少代码量/污染  实现重用
+	var addLog = {		//临时加入的显示日志函数
+		updated: function() {
+			console.log("数据发生变化为" + this.count);
+		}
+	}
+
+	var app = new Vue({		//实例化Vue
+		el: '#app',
+		data: {count: 100},
+		mixins: [addlog]	//混入
+	})
+
+//extends： 扩展  对构造器（new Vue）进行扩展
+	var extendObj = {
+		created: function(){
+			console.log("I'am new extend element")
+		}
+	}		//然后在new Vue（{}）里， el，data和其他下加入 extends: extendObj
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</html>

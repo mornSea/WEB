@@ -1,0 +1,74 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+
+
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+//用 Vue init <template-name> <project-name> 来初始化项目  项目名自己随便取 （不要和现有/已有的文件夹同名 最好带连字符英文）
+		//5种模板： webpack webpack-simple  browserify  browserify-simple  simple(简单单页模板)   一般都用qebpack
+		//之后分别出现 改项目名？ 描述？ 作者？ 安装Vue路由？ 用ESlint？ 安装单元测试工具？ 安装e2e模拟用户行为？
+
+//cd 到项目目录里 用npm run dev 在开发模式下运行  然后浏览器打开 出现中文构建页      npm run build为项目打包  
+
+
+//项目结构（主要src）
+	build 									//webpack配置文件
+	config									//vue配置文件（里面index.js监听端口 打包输出）
+	node_modules							//依赖包
+	src：									//项目核心文件（写的代码）
+		assete								//静态资源（css less sass 外部js）
+		components							//公共组件（这里的组件将填充main.js的实例）
+		routes								//路由（配置项目路由）
+		App.vue								//根组件
+		main.js								//入口文件（这定义的实例将挂载在index.html 根节点下）
+	static									//静态资源（图片 音乐，，）
+	.bablelrc								//bable编译参数
+	.editorconfig							//代码格式
+	.gitgnore								//git上传时忽略的文件配置
+	.postcssrc.js							//转换css的工具
+	index.html								//主页（一般只定义一个空的根节点）
+	package.json							//项目基本信息（创建vue-cli时自动生成）
+	README.md								//项目说明
+
+//index.html如常见的只带id 的div； mian.js(入口文件)在下个文档“使用”部分 主要是引入vue 根组件 路由， 并定义vue实例
+//App.vue: vue页面由三部分组成： 模板（template） js（script） 样式（style）
+
+	<template>								//模板只能有一个父节点 即#App之父div只能有一个 
+		<div id="app">	
+			<img src="./assets/logo.png">
+			<route-view/>					//子路由视图插槽 后面路由页面都显示在此 像个iframe
+		</app>
+	</template>
+
+	<script>								//一般用es6写
+	export default {						//再用export default导出
+		name: 'App'							//还可包含数据data  生命周期mounted  方法methods
+	}
+	</script>
+	
+	<style>									//默认全局 若要定义只在某组件下 只要在标签上加上scoped
+	#app {
+		font-family: 'Avennir', Helvetica, Arial, sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-align: center;
+		color: #2c3e50;
+		margin-top: 60px;
+	}										//也可在标签间用import引入文件
+	</style>
+
+
+
+</script>
+</html>

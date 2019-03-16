@@ -1,0 +1,75 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+<div v-bind:class="{ active: isActive }"></div>		<!--通过v-bind：class 传一个css对象  可以传入多个属性动态的切换class  （动态与互动）-->
+													<!--而active是否存在取决与isActive这个数据属性的truthinesss值  -->
+<div id="app1" class="static"						//语法：{  样式：属性   }  样式决定样式是否存在
+	v-bind:class="{ active: isActive, 'text-danger': hasEoor }">  	<！--v-bind:class也可与普通class同存（基本与国定）-->
+	<p v-bind:class="classObject1"></p>				<!--绑定的对象不一定要内联定义在模板{}里-->
+	<p v-bind:class="classObject2"></p>				
+	<p v-bind:class="[activeClass, errorClass]">	<！--属性数组 -返回- 样式列表-->
+	<p v-bind:class="[isActive ? activeClass : errorClass]">    <!--在v-bind中直接用三元表达式赋值-->
+	<p v-bind:class="[{active: isActive}, errorCalss]">			<!--多个条件class时  也可以在数组里使用对象语法-->
+</div>	
+
+<my-componten class="baz, boo"></my-componten>		<!--一个自定义模板  html里面的class不会因为组件声明时也有就被覆盖-->
+
+<div v-bind:style="{ color: activeColor, fontSize: fontSize+'px' }"></div>  
+<!--v-bind的style象CSS 其实是js 对象   驼峰（CSS属性名）+  string（CSS属性值）单引号（值/单位）-->
+
+<div id="app2" v-bind:style="styleObject"></div>			<!--直接绑定到一个样式对象上更好 看起来清晰, :style=[多个样式对象]用数组语法-->
+															<!--:style使用到需要加浏览器前缀时  （如transform）vue会自动添加-->
+
+
+
+<div :style="{display: ['-wbkit-box', '-ms-flexbox', 'flex']}"></div>  	<!--可向：style中属性提供含多个值的数组 常用于提供多个带前缀的值-->
+<!--像这样写 只渲染最后一个被浏览器支持的值  如llq不支持带-ms-flexbox  就渲染为： display：felx-->
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+var app1 = new Vue({
+	el: "#app1",
+	data: {
+		isActive： true，    
+		hasError: false，
+		classObject1: { 		//v-bind的非{模板}内联对象 要在data里专门建一个对象 存储多个值  即那个名字就是一个模板与数据中一对象对应
+			active: true,
+			'text-danger': flass 					//模板里的‘样式’在数据里面也是要的     并且可以直接决定样式是否存在 而不通过属性
+		},
+		classObject2: function(){   //还可以加入计算属性  根据其他的值判断返回样式 并且做一些计算
+			return {
+				active: this.isActive && !this.error,
+				'text-ganget': this.error && this.error.type=='fatal'
+			}
+		}，
+		activeClass: 'active',
+		errorClass: 'text-danger'
+	}
+})
+
+
+Vue.component('my-component',{
+	template: '<p class="foo, bar">Hi</p>'           //最后四个class都有   对数据绑定class也一样
+})
+
+var app2 = new Vue({
+	el: "#app2",
+	data: {
+		styleObject: {
+			color: 'red',
+			fontsize: '16px'
+		}
+	}
+})
+
+
+</script>
+</html>

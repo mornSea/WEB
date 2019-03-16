@@ -1,0 +1,294 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+ 
+vuex: 专为vue开发的状态管理模式  集中存储与管理所有组件的状态 并以相应规则保证状态以可预测方式变化（可在chrome上安装devtools sextension调试）
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+//单向数据流（循环）：
+	//State 驱动应用的(单向)数据-->View 声明方式把state映射到视图(静态显示数据流)-->Action 处理用户在View操作引起的状态变化(数据源变化追踪)
+	
+	//Demo:
+		<template>
+			<div>
+				<!--view -->
+				<div>{{ count }}</div>
+				<button @click="increment">increment</button>
+			</div>
+		</template>
+
+		<script>
+		export defaault {
+			//state
+			data(){
+				return {
+					count: 0
+				}
+			},
+			//actions
+			methods: {
+				increment() {
+					this.count++
+				}
+			}
+		}
+		</script>
+
+		<style>
+		
+		</style>
+
+
+	//Vue 解决的问题：
+		//多视图组件（父子 兄弟组件）间状态共享 （通信）
+		//不同视图组件的行为要变更为同一个状态
+		//so 适用于中大型单页应用
+	
+	//与全局变量区别： 
+		//响应式： Vuex的状态存储是响应式的 当Vue从store中读取状态时 如store变化 相应组件得到高效更新
+		//不直接改变store：	不能直接改  唯一途径是commit mutation， 这样方便跟踪每一个状态变化
+
+
+
+
+//Vuex核心流程：
+
+	Vue Components ——触发dispatch——> Action ——Commit——> Mutation(提交数据源更改操作) ——Mutate——> State ——Render渲染——> Vue Components...
+
+	//数据源初始状态由State出 Action与Backend API交互 Mutation与Devtools交互   而Vuex集中管理的是除组件外另三个（Action Mutation State）
+ 
+
+	//包含：
+		//Vue Components：Vue组件 html上接受用户操作等交互  执行dispatch方法触发对应action进行回应
+		//Disaptch：由操作触发 是唯一能执行action的方法
+		//Action:操作的处理模块 包含同/异步操作 支持多个同名方法(按注册的顺序触发) 向后台API请求  触发其他action + 提交mutation  支持Promise
+		//Commit: 状态改变时提交操作方法  对mutation进行提交  是唯一能执行mutation的方法
+		//Matations：状态改变的操作方法 是Vuex修改state的唯一推荐方法 （严格模式下不报错） 只能进行全局同步方法操作 会暴露hock 便于state监控
+		//State： 页面状态管理的容器对象 集中存储Vue components中data对象的零散数据 进行全局唯一管理 页面要的数据从该对象中读取(细粒度数据)
+		//Getters：state对象读取方法 包含在render里		Vue Components通过该方法读取全局state对象
+
+	//逻辑：
+		//1）组件接收交互行为 调用dispatch方法触发action相关处理  
+		//2）若页面状态需要改变 调用commit方法 提交mutation 修改state 
+		//3）通过getters 获取到state新值 重新渲染Vue Components  页面更新完成！
+
+//入门实例：
+  // src/vuex/store.js
+	import Vue from 'vue'
+	import Vuex from 'vuex'
+	Vue.use(Vuex)
+
+	const state = {								//1）state  创建初始状态
+		count: 1								//	 放置初始状态
+	}
+
+	const mutations = {							//2）mutations 创建改变状态的方法
+		ADD (state, n){							//	 状态变更函数 一般大写
+			state.count += n;
+		}
+	}
+
+	const getters = {							//3）getters 提供外部获取state
+		count: function(state){					//	 state一般作为参数？
+			return state.count;
+		}
+	}
+
+	const actions = {							//4）action 创建驱动方法改变mutations
+		add ({commit}, data){					//	 触发mutation中相应方法 一般这边触发的函数名是：mutation的状态变更函数的小写帮本
+			commit('ADD', data)
+		}
+	}
+
+	const store = new Vuex.Store({				//5）全部注入vuex的store中
+		state,
+		mutations,
+		gtters,
+		actions
+	});
+
+	export default store;						//6）输出store
+
+  // src/mian.js
+	import Vue from 'vue'
+	import App from './App'
+	import route from './router'
+	import store from './vuex/store'
+	
+	Vue.config.productionTip = false
+
+	new Vue({
+		el: '#app',
+		router.									//全局注入
+		components: { App },
+		template: '<App/>'
+	})
+
+  // src/component/Count.vue
+  	<template>
+		<div class="hello">
+			<h1>{{ msg }}</h1>
+			<h2>{{ count }}</h2>
+			<button @click="clickAdd">新增</button>
+		<div/>
+	</template>
+
+	<script>
+			export default {
+				data() {
+					return {
+						msg: 'Vuex test !'
+					}
+				},
+				computed: {
+						count() {					//获取state值
+							return this.$store.state.count;
+						}
+				},
+				methods: {
+					clickAdd() {					//分发action的add方法
+						this.$store.dispatch('add', 1);
+					}
+				}
+			}	
+	</script>
+
+
+//state状态对象的获取方法
+	//1) 组件的template直接用
+	<h2>{{ $store.state.count }}</h2>
+
+	//2) 计算属性computed直接赋值 （直接获取）
+	computed: {
+		count() {
+			return this.$store.state.count;				//this指向main.js的Vue实例
+		}
+	}
+
+	//3) 通过mapState的对象赋值 （同上 但间接）
+	computed: mapState({
+	/*	count: function (state) {						//es5
+			return stare.count;
+		},	*/
+		count: state => state.count						//es6
+	})
+
+	//4) 用(mapState的) 数组赋值 来获取
+	computed: mapState(['count'])
+														//四五（数组/JSON）较常用
+	//5) --------------JSON 赋值
+	comouted: mapState({
+		count: 'count'
+	})
+
+	//完整示例  (并比较四和五)
+	<template>
+		<div class='hello'>
+			<h1>{{ msg }}</h1>
+			<h2>{{ $store.state,count }}</h2>
+			<h2>{{ count }}</h2>
+			<button @click="clickAdd"> 新增 </button>
+		</div>
+	</template>
+
+	<script>
+		import {mapState} from 'vuex'
+		export default {
+			data() {
+				return {
+					msg: 'Vuex test !!!'
+				}
+			},
+			computed: matState({
+				count: 'count'
+			}),
+			methods: {
+				clickAdd() {
+					this.$store.dispatch('add', 1);		//分发action的add方法
+				}
+			}
+		}		
+	</script>
+
+	<style scoped><style>
+
+
+
+
+
+
+//mutations-getters-actions异步
+	//1 mutations 修改状态
+		//1）template里直接用$store.commit() 触发
+		/*template*/ <button @click="$store.commit('ADD')"> + </button>
+		/*src/vuex/store.js*/ const mutations = {ADD (state){state.count++;}}
+
+		//2) 利用mapMutations引入触发
+		<template>
+			<div class="hello">
+				<h1><{{ msg }}/h1>
+				<h2><{{ count }}/h2>
+				<!--直接调用相应方法：-->
+				<button @click="ADD"> + </button>
+			</div>
+		</template>
+
+		<script>
+			import {mapState, mapMutations) from 'vuex'
+			export default{
+				data() {
+					return {
+						msg: 'test'
+					}
+				},
+				computed: mapState({						//第四种
+					count: 'count'
+				}),
+				methods: mapMutations([						//methods加入mapMutations
+					'ADD'
+				])
+			}
+		</script>
+		
+	//2 getters 获取state和过渡
+		//1）基本用法：
+		/* src/vuex/store.js*/ const getter = {count:function(state) {return state.count+100}}
+		
+		//2) 常规获取值
+		computed: {count() {return this.$store.getters.count}}	//获取getters
+
+		//3) mapGetters获取值
+		import （mapState， mapMutations， mapGetters） from ‘uex’
+		computed: ...mapGetters(["count"])
+
+	//3 action 异步修改状态 （异步版的mutations  常用）
+		/*store.js  用setTimeout增加异步代码*/  const add({commit}){setTimeout(()=>{commit('ADD')},3000)}; sonsole.log("我在render前")
+		/*常规使用*/　　<button @click="add">+</button>    methods:{ass(){thspatch('add';) } }
+		/*mapAction*/ <button @click="add"> + <button> import{mapState, mapActions}fron 'vuex', methods:{...mapActions(['add'])}
+
+//传递参数（只要在mutations和actions相应地方加上参数 调用时传入）
+	/* src/vuex/store.js*/ 
+	const mutations = {ADD (state, n) {state.count += n}}		//action中传递参数
+	const action = {add({commit}, n) {setTimeout(() => commit('ADD', n);), 3000}; sonsole.log(('I first then render');)} //触发matation 传参
+
+	/*组件中调用传递*/<button @click="add"> + </button>  methods: {add(){this.$store.dispatch('add', 99);}}
+
+	/*组件用mapActions调用传递*/ <button @click="add(99)">+<button> 	methods : { ...mapActions(['add']) }
+
+
+//module 模块组
+	//当应用非常复杂 状态非常多时 要将store分割为模块（module） 每个分别有state mutation action getter 甚至嵌套子模块
+	//大致结构： 用const一个个声明moduleA/B/C。。类  每个里又有state mutations，，，，等子类 再用new Vuex.Store({modules:{a: mouleA,}}) 组装
+	
+	//建议每个module分开写（或者用模板）  即每个模块都有state（初始化）， mutation（改模块动作与取值）， getters（可异步取值）
+	
+	//module中name要唯一 不然取值/改值时会冲突   目前mapGetters只能获取对象
+</script>
+</html>

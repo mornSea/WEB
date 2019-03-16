@@ -1,0 +1,157 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+<!--v-model指令在表单input/textarea/select 创建双向数据绑定 vue自动选择正确方法更新元素  忽略value/checked/selected 应在js data声明初始值-->
+
+<input v-model="message" placeholder="try edit me :)">				<!--v-model设置赋值  placeholder 是设置待输入默认值 输入则消-->
+<p>Message is: {{ message }}</p>									<!--非常强大  直接在html中input和其他元素建立数据绑定  自动更新-->
+
+
+<span>Multiline message is: </span>									<!--多行文本 输入与显示-->
+<p style="white-space: pre-line;">{{ message }}</p><br>
+<textarea v-model="message" placeholder="add multiline lines"></textarea>
+
+
+
+
+
+
+<input type="checkbox" d="checkbox" v-model="checked">				<!--单个复选框 绑定到布尔值     （下行）并动态显示此值-->
+<label for="checkbox">{{ checked }}</label>
+
+<div id="example-3">												<!--多个复选框 通过同一个model值绑定到同一个js数组  （写法啰嗦）-->
+	<input type=checkbox id="a" value="a" v-model="checks"> <label for="a">a </label>
+	<input type=checkbox id="b" value="b" v-model="checks"> <label for="b">b </label>
+	<input type=checkbox id="c" value="c" v-model="checks"> <label for="c">c </label>
+	<input type=checkbox id="d" value="d" v-model="checks"> <label for="d">d </label>
+	<br>
+	<span>Checked : {{ checks }}</span>
+</div>
+
+<div id="example-4">
+	<input type="radio" id="1" value="1" v-model="picked"><label for="1">1</label>		
+	<input type="radio" id="2" value="3" v-model="picked"><label for="2">2</label>		
+	<input type="radio" id="3" value="4" v-model="picked"><label for="3">3</label>	
+	<br>															<!--单选框-->
+	<span> Picked: {{ picked }}</span>
+</div>
+
+
+<div id="example-5">
+		<select v-model="selected">									<!--选择框-->
+			<option disabled value="">请选择</option>				<!--disabled为不可选中 选择框后 js切换为新值-->
+			<option>a</option>
+			<option>b</option>
+			<option>c</option>
+			<option>d</option>
+			<option>e</option>
+		</select>													<!--上面的value=“”一般做判断条件 + 元素.val()取其值-->
+		<span>Selected: {{ selected }}</span>
+</div>
+
+
+<div id="example-6">
+		<select v-model="selected" multiple style="width: 60px">	<!--多选框 (同复选框)绑定到一个数组   浏览器提供 ‘选择 确定/取消’-->
+			<option>a</option>
+			<option>b</option>
+			<option>c</option>
+			<option>d</option>
+			<option>e</option>
+		</select>													
+		<span>Selected: {{ selected }}</span>
+</div>
+
+<select  id="example-7" v-model="selected">							<!--用v-for渲染   用v-bind把值绑定vue动态属性（可不是字符串）-->
+	<option v-for="option in options" v-bind:value="option.value">
+		{{ option.text }}
+	</option>
+</select>
+<span>Select: {{ selected }}</span>
+
+
+
+
+																	<!--值绑定： -->
+
+<input type="radio" v-model="picked" value="a">						<!--选中时 picked为字符串‘a’-->
+
+<input type="checkbox" v-model="toggle">							<!--toggle值为true或者false-->
+
+<select v-model="selected">											<!--值为‘abc’ 除了用v-bind  一般非单选框v-model值是字符串-->
+	<option value="abc"></option>
+</select>
+
+<input type="chaeckbox" v-model="toggle" true-value="yes" false-value="no">	<!--选中yes没中no    因两个特性不影响控件alue特性 不能提交 -->
+
+<input type="radio" v-model="pick" v-bind:value="a">				<选中时 vm.pick===vm.a>
+
+<select v-model="seleted">											<!--内联对象字面量-->
+	<option v-bind:value="{ number: 123 }"> 123 </option>			<!--选中时 vm.select是一个对象  有属性number， 值为123-->
+</select>
+		
+
+
+
+
+
+																	<!--修饰符:  -->
+<input v-model.laze="msg">											<!--使用chang事件才同步-->
+
+<input v-moel.number="age" type="number">							<!--将用户输入转为数值类型  type配合-->
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+vm1 = new Vue({
+	el: "example-3",
+	data: {
+	checks: []
+	}																//老规矩 先绑定元素  再将其中model数据与data绑定
+})
+
+vm2 = new Vue({
+	el: "example-3",
+		data: {
+			picked: ''												//除了上面数组  （字符串）也可用‘’ 连接在一起
+		}
+})
+
+
+vm3 = Vue({															//如果v-model初始值未匹配 select渲染为未选中 为iOS用户加入空值禁选项
+	el: "example-5",
+		data: {
+			selected: ''
+		}	
+})
+
+vm4 = Vue({
+	el: "#example-6",
+	data: {
+		selected: []
+	}
+})
+
+vm5 = Vue({
+	el: "example-7",
+	data: {
+		selected: "A",
+			options: [												//[数组里每一项对象中{key-text的值显示在选项，key-Value的值是实际值}]
+			{text: 'one', value: 'A'},
+			{text: 'two', value: 'B'},
+			{text:'three', value:'C'}
+		]
+	}
+})
+
+
+
+</script>
+</html>

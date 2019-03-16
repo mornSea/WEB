@@ -1,0 +1,99 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+
+	<div id="example"> {{ message }}</div>
+
+	<!--
+		 Vue 特性： 非侵入式的响应式系统  
+			数据只是js对象  修改时更新  使得状态管理容易
+	-->
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+//追踪变化
+	//当把普通的js对象传给Vue的data；  Vue会遍历此对象的所有属性 使用Object.definePeioerty把属性全转为getter/setter  
+	//这个函数是个ES5里无法shim的特性 so Vue无法在IE8 以下使用  getter/setter对用户不可见 在内部它们让Vue追踪依赖 在属性被访问/改变时通知Vue
+
+	//安装Vue-devtools可检查geter/setter       每个组件都有相应的watcher实例对象 它会在组件渲染时把属性记录为依赖 
+	//当依赖项的setter被调用时 通知watcher重新计算 使关联组件更新
+ 
+	//		data 》watcher 》CRF 》V-DOM Tree 》data         数据对象 》 观察者 》 组件渲染函数 》 虚拟节点树 》 （修改）数据对象
+
+//检测变化
+	//由于js限制与Object.observe被废弃 Vue不能检测到对象属性的添加/删除  再加上getter/setter转换 so 属性必须在data中存在Vue才能转换（响应）
+	//so Vue不允许在已创建的实例上动态添加新的根级响应式属性 但可以用Vue.set(object, ‘key’, value)将响应属性添加到对应对象上
+	
+	//如 Vue.set(vm.someObj, 'b', 3)  添加多个可用assign或者_.extend 但是这样新加入的属性不触发更新 so 创新对象 包含原对象和新属性（名同）：
+	//this,someObject = Object.assign({}, this.someObject, {A:1, B:2})
+
+//声明响应式属性
+	//正由于Vue不允许动态添加根级响应式属性 so必须在初始化实例前声明根级响应式属性 即使只是个空值‘’  之后赋值  
+
+//异步更新队列
+	//Vue异步执行DOM更新： 只要观察到数据变化 Vue开启一个队列  并缓冲 在同一事件循环里发生的所有数据改变
+
+	//如果一个watcher被多次触发 只会推入到队列里一次 （去除重复数据与不必要计算）  在下一个事件循环‘tick’中  Vue刷新队列并执行（已去重）
+	//Vue在内部尝试对异步队列使用原生Promise.then 和 MessageChennel 	 如不支持 用setTimeout(fn, 0)代替
+
+	//so 像上面声明响应式属性后赋值更新 组件不会马上更新渲染 刷新队列时 组件在-事件循环队列清空时的-下一个tick更新 
+	//此时如果想在DOM状态更新后做什么 会很难  在数据变化后用 Vue.nextTick(callback)  这样回调在DOM更新后马上调用 	如：
+
+		var vm = new Vue({
+			el: 'example',
+			data: {
+			message: '42'
+			}
+		})
+		
+		vm.message = 'the answer of anything'
+		vm.$el.textContent === 'the answer of anything'		//false
+		Vue.nextTick(function () {
+			vm.$el.textConent === 'the answer of anything'	//true
+		})
+
+		//组件里用 vm.$nextTick() 实例特方便 不须要全局Vue    且回调函数的this将自动绑定到当前的Vue实例上：
+
+			Vue.component('example',{
+				templage: '<span>{{ message }}</span>',
+				data: function () {
+					return {
+						message: '没有更新'
+					}
+				},
+				methods: {
+					updateMessage: function () {
+						this.message = '更新完成！'
+						console.log(this.$el.textContent) 	//没有更新
+						this.$nextTick(function() {
+							console.log(this.$el.textContent)//更新完成！
+						})
+					}
+				}
+			})
+
+		//又因为$nextTick()返回一个Promise对象 用ES6语法 async/await：
+			methods: {
+					updateMessage: async function() {
+						this.message = 'updated'
+						console.log(this.$el.textContent)	//未更新
+						await this.$nextTick()
+						console.log(this.$el.textContent)	//更新完成！
+						
+					}
+			}
+			
+
+
+
+</script>
+</html>

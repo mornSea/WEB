@@ -1,0 +1,87 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+<div ip="app" >
+	<p>{{ foo }}</p>  
+	<!--这里的foo不会更新-->
+	<button v-on:click="foo = 'baz' ">chang it </button>
+</div>
+
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+var data = { a: 1 };
+var vm = new Vue({
+	data: data
+})   //（如果绑定并且值在视图上面有对应）属性值改变时， 视图会跟着改变  反之亦然
+
+console.log(vm.a ==data.a);
+
+vm.a=2;
+console.info(data.a)
+
+
+data.a = 3;
+alert(vm.a);
+
+vm.b="hi~";
+data: {
+	newTodoText: '',
+	visitCount: 0,
+	hideCompletedTodos: false,
+	todos: [],
+	error: null
+}
+
+var obj = {
+	foo: 'bar'
+}
+
+Object.freeze(obj)    //这个方法会阻止修改现有的属性， 即不再响应变化
+
+new Vue({
+	el: '#app',
+	data: obj
+})
+
+//除了（用户定义）数据属性之外的属性与方法都有前缀$符号:
+var data2 = { a: 1 };
+var vm2 = new Vue({
+	el: '#example',
+	data: data2
+})
+
+vm2.$data === data;
+vm2.$el ===document.getElementById('example');
+
+vm2.$swatch('a', function(newValue, oldValue)) {    //very useful function
+	//这个回调会vm2.a改变后调用
+}
+
+//（生命周期）钩子： vue实例都要经过一些初始化（监听  编译模板  挂在DOM  保持更新）会运行这些钩子， 我们可以在不同阶段加入代码
+new Vue({
+	data: {
+	a: 1
+	},
+	created: function(){  //刚被创造时       不能用箭头函数，因为指向this不一样
+	console.log('a is: ' + this.a)   //this指向VM实例
+	}
+})
+//除此之外  还有mounted(安装完)    updated（发送完数据）   destroyed（销毁完）
+
+
+//new Vue() -> {创造前钩子} -> ObserverData(监控data数据变化) -> initEvents(vue内部初始化事件) -> {创造完成钩子} ->  有el或者template？ -> 编译模板 把data数据+模板生成html中 -> {挂载前钩子 此时html还没有挂到页面上面去} -> 挂载DOM/html  -> {挂载后钩子} ->  不停监控数据变化 （有变化 -> {更新前钩子} -> 更新（DOM） -> {更新后钩子} -> 监听。。。。。。。。。）->  {Vue实例销毁前钩子}  ->  销毁 ->{销毁后钩子}
+
+
+
+
+</script>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+i<body>
+<div  id="example">
+	<p>original message: "{{ message }}"</p>
+	<p>computed reversed message : "{{ reversedMessage }}"</p>	<!--计算属性getter-->
+
+
+	<p>Reversed message: "{{ reversedMessage() }}"</p>		<!--表达式调用方法getter-->
+</div>
+
+
+<div id="demo">{{ fullName }}</div>
+
+
+<div id="watch-example">
+	<p> Ask a yes/no question: <input v-model="question"></p>
+	<p>{{ answer }}</p>
+</div>
+<!--Ajax 与通用工具库-->
+<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js">
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js">
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+//模板如果放太多逻辑计算会让它太重并且难维护  任何复杂逻辑应该用计算属性
+var vm = new Vue({
+	el: "#example",
+	data: {
+		message:'hello'
+	},
+	computed: {
+		reversedMessage: function(){   						//函数用作用作vm.Message计算属性的getter函数
+			return this.message.split('').reverse.join('')  //this指向vm实例   
+															//vm.reversedMessage依赖message， so， 
+															//message改了会带动所有依赖vm.reversedMessage的绑定， getter没有副作用
+		},
+		methods: {
+			reversedMessage: function(){
+				return this.message.split('').reverse.join('')  //方法与计算属性 效果都可以达到，
+																//后者基于依赖缓存，只要message没变化  多次访问都是回以前的结果  
+																//但是方法会重新计算    所以应该（尤其大型计算/遍历）使用计算属性
+			}
+		}
+	}
+})
+
+//命令式并且重复的
+/*
+
+var vm2 = new Vue({
+	el:  "#demo",
+	data: {
+		firstName: 'Foo',
+		lastName: 'Bar',
+		fullName: 'Foo Bar'
+	},
+	watch: {
+		firstName: function(val){
+			this.fullName = val + ' ' + this.lastName
+		},
+		lastName: function(val){
+			this.fullName = this.firstName + ' ' + val
+		}
+	}
+})
+
+*/
+
+//计算属性式的：
+var vm2 = new Vue({
+	el: '#demo',
+	data: {
+		firstName: 'Foo',
+		lastname: 'Bar'
+	},
+	computed: {
+		fullName: {
+			get： function() {
+			return this.firstname + ' ' + this.lastName
+			}，
+																	//计算属性默认只有getter  但是可以自定义setter：
+			set: function(newValue){
+				var names  = newValue.split(' ')
+				this.firstName = names[0]							//再往vm.fullName = '加入新名字'  时， 所有Name都会更新
+				this.lastname = names[names.length - 1]
+			}
+		}
+	}
+})
+
+
+//自定义监听器watch:           watch允许我们  （异步访问一个API + 限制频率 + 得到结果前设置中间状态）  这些都是计算属性无法做到的
+var watchExampleVM = new Vue({
+	el: '#watch-example',
+	data: {
+		question: '',
+		answer: 'I cannot give you an answer until you ask  a  question'
+	},
+	watch: {  //如果’question‘改变， 就运行
+		question: function(){
+			this.answer = 'Wating for you to  stop  typing...'
+			this.debouncedGetAnswer()
+		}
+	},
+	created: function(){			//'_./debounce ' 函数通过Lodash限制操作频率(这里是访问yesno/.wtf/api的)， Ajax请求直到用户输入完才发
+		this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
+	},
+	methods: {
+		getAnswer: function(){
+			if (this.question.indexOf('?')===-1){
+				this.answer= 'qusstions usualy contain a question mark  ;-)'
+				return
+			}
+			this.answer = 'Thinking....'
+			var vm3 = this
+			axios.get('https://yesno.wtf/api')
+				.then(function(response){
+					vm3.answer = _.capitalize(rponse.data.answer)
+				})
+				.catch(function(error){
+					vm3.answer = 'Error !   could not reach the API' + error
+				})
+		}
+	}
+})
+
+
+
+
+
+//
+
+
+
+
+</script>
+</html>

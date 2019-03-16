@@ -1,0 +1,318 @@
+<!DOCTYPE html> 
+<html>
+	<meta charset="UTF-8">
+	<style><!--设置一些基本样式 背景色， 文字颜色， 居中-->
+		* {margin: 0; padding: 0; text-align: center;}
+		body {background-color: #F5F5F5; color: 757575;}  
+	</style>
+	<script scr="./vue_devloper.js"></script><!--导入vue-->
+<body>
+
+
+
+	
+
+</body>
+<!--由于要等dom渲染出来再操作，so；使用vue的代码放在body后面-->
+<script>
+//混入 （混入对象可包含任意组件选项 在组件中使用混入对象时 混入对象的组件混入组件本身）
+
+		var myMixin = {													//定义混入对象
+			created: function(){
+				this.hello()
+			},
+			methods: function() {
+				hello :function() {
+					console.log('hello form mixin !')
+				}
+			}
+		}
+
+		var Component= Vue.extend({										//定义一个使用混入对象的组件
+			mymixins: [myMixin] 
+			})
+
+		var component = new Component()
+
+	//选项合并 ：
+		//一般组件和混入对象混合时 数据对象在内部进行递归合并 如冲突 组件数据优先 而同名钩子函数混合为一个数组 都调用 这时混入函数优先于组件
+		//值为对象的选项 如methods，components，，， 混合为同一个对象 键名冲突时 组件优先  （Vue.extend（）也是这个策略）
+		
+	//全局混入：
+		//一旦使用后 会影响到所有之后创建的Vue实例  使用恰当时 可为自定义对象注入处理逻辑：
+
+			Vue.mixin({													//全局混入函数
+				created: function() {
+					var myOption = this.$opions.myOption				//为自定义的选项myOption注入一个处理器 
+					if (myOption) {
+							console.log(myOptiony)
+					}
+				}
+			})
+			
+			new Vue({
+				myOptiony: 'hello'
+			})
+
+	//自定义选项合并逻辑： 向 Vue.config.optionMergeStrategies  添加自己的策略函数 两个参数（toVal, formVal）
+
+
+
+
+
+//自定义指令
+	//除了v-model  v-show这种核心指令 也可自定义  如定义一个v-focus ：
+		
+		Vue.directive('foucs',{										//注册一个全局自定义指令v-foucs
+			inserted: function(el){									//当被绑定的元素插入到DOM时：
+				el.foucs()											//聚焦元素
+			}
+		})
+
+		directives: {												//注册局部指令 组件中加入一个directives选项
+			focus: {
+				inserted: function(el){
+					el.foucs()
+				}
+			}
+		}
+
+	//钩子函数：
+		//一个指令定义对象提供几个钩子函数：
+			//bind初次绑定时初始化设置  inserted被绑元素插入父元素时  update组件的VNode更新时 unbind解绑定时
+		
+		//钩子函数参数：
+			//el绑定的元素 binding一个对象{name指令名 value指令绑定值 oldValue略 expression‘正则’ arg指令参数 modifiers包含修饰符的对象} 
+			//vnode虚拟节点 oldVnode上一个虚拟节点     （修饰符对象 如 smt.foo.bar 修饰符对象为 {foo：true， bar： true}  ）
+			//除了el 其他参数应是  只读 的
+
+	//函数简写：
+		//如只想在bind和update时触发相同行为 （不在意其他钩子）  可这么写;
+			Vue.directive('colot-swatch',function(el, binding){
+				el.style.backgroundColor = binding.value
+			})
+
+	//对象字面量：
+		//如指令要多个值 可传入一个js对象字面量 指令函数可接受所有的合法js表达式
+			<div v-mode='{ color: 'white', text:'hello' }'></div>
+			
+			Vue.directive('demo', function(el, binding){
+				console.log(binding.value.color)
+				console.log(binding.value.text)
+			})
+
+
+//渲染函数 & JSX		
+	//一般推荐用template创建html  但有时要js完全编程能力 用render函数 它比模板更接近编译器
+	//假设要生成一个描点标题  如要通过level prop动态生成标签 用v-if和<slot>可以  但是低效  so 可以：
+		<anchored-heading :level="1" >hello world</anchored-heading> 		//定义组件接口
+ 
+		Vue.component('anchored-heading', {
+			render: function(createElement) {
+				retuen createElement(
+					'h' + this.level,										//标签名
+					this.$solts.default										//子元素数组
+				)
+			}，
+			props：{
+				level: {
+					type: Number,
+					require: true
+				}
+			}
+		})			
+		//向组件传递不带slot特性的子元素时， 这些子元素存储在组件实例的$slots.default中
+
+	//节点， 树， 虚拟DOM：
+		//想高效更新DOM节点树所有/部分节点是困难的 在Vue里只要用模板 或 渲染函数：
+	
+			<h1>{{ blogTitle }}</h1>  
+	
+			render: function(createElement) {retuen createElement('h1', this.blogTitle)}
+		
+		//虚拟DOM
+			//Vue通过建立虚拟DOM 对真实DOM的变化保持追踪 如上行return 返回的不是实际的DOM而是VNode  它包含的信息告诉Vue页面上要渲染些什么
+
+		//createElement参数：（第一个必须）
+			//标签字符串/组件选项对象/异步函数， {包含模板属性的对象}， 子虚拟节点（也用createElement（））/文本虚拟节点（就是一些字符串）
+
+		//深入data:
+			//正如在v-bind中class和style会被特殊对待一样 VNode中级别高的字段有（前七个与第九个都是对象形式）：
+				//class， style， attrs， props， domProps， on， nativeOn， directives， scopedSlots， slot， key， ref， refInfo
+		
+		//约束：
+			//VNode必须唯一， 即不能按普通用法重复多次组件/元素  如要， 应用工厂函数：
+				render: function(createElement){
+					return createElement('div', 
+							Array.apply(null, {length: 20}).map(funtion(){				//创建20个相同’hi‘的工厂函数 （创数组 对每个创元素）
+								return createElement('p', 'hi')
+						} )
+					)
+				}
+	
+	//js可以完成的 render就不会提供专有的替代方法  如template中的v-if 和v-for  会被js的if/else 和 map重写：
+		props: ['item'],
+		render: function(createElement){
+			if (this.items.length) {
+				return createElement('ul', this.items.map(function(item){				//v-for其时逻辑同上
+					return createElement('li', item.name)
+				}))
+			}else{
+				return createElement('p', 'no itens found')
+			}
+		}
+
+	//render没有v-model   so 自己实现：
+		props: ['value'],
+		render: function(createElement){
+			var self = this
+			return createElement('input', {
+				domProps: {
+					value: self.value
+				},
+				on: {
+					input: function(event){
+						self.$emit('input', event.target.value)
+					}
+				}
+			})
+		}
+
+
+	//事件·按键修饰符（有前缀形式用于on:   如 ~keyup:this.dosomething）： 
+		//.passive & 	.capture !	 .once ~	.capture.once/.once.capture ~!   
+
+	//插槽：
+		//通过this.$slots访问静态插槽内容 得VNodes数组  this.$scopedSlots访问域插槽 得到 返回VNodes的函数  
+			//如果要用渲染函数向子组件中传递作用域插槽 可用VNode数据对象的scopedSlots域  （像data： {} 域）
+
+
+
+  //JSX
+	//有babel插件 用于在Vue中使用JSX语法 回到更接近模板的语法上 （把太长的createElement换成 h ）
+		import AnchoredHeading from './AH.vue'
+
+		new Vue({
+			el: '#demo',
+			render: function (h){
+				return (
+					<AnchoredHeading levle={1}>
+						<span> hello </span>	World !
+					</AnchoredHeading>
+				)
+			}
+		})
+
+	//函数式组件：（主要在render处理逻辑？）
+		//无状态（无响应式数据） 无实例（无this上下文）只是一个接收参数的函数   通过functional特性声明
+		Vue.component('my-com',{
+			functional : true,
+			props:{
+				//props 可选
+			},
+			render: function(createElement, context){
+				//为了弥补缺少的实例 提供第二个参数做上下文
+			}
+			
+		})
+		//  用单文件组件时  基于模板的函数式组件声明：		<template functional></template>   组件要的一切用上下文传递：
+			//props,  children, slots, scopedSlots, data, patent, listeners, injections,   它渲染开销小， 不会出现在Vue devtools里
+			//作为包装组件时有用的地方： 程序化的在多个组件中选择一个/将children props data传递前操作他们（在渲染函数里进行逻辑操作）
+
+		//向子组件/元素传递特性和事件：组件里没定义为prop的特性会添加到组件根 同名智能合并  函数式组件要求显示定义这些: data.attrs/data.on
+		//slots() vs children ? : 同时用让slot（）系统分发 or 简单的通过children接受  其他的用其他的组件
+
+	//模板编译：Vue 的模板是编译成的render（）   如用Vue.complie实时编译模板字符串的demo：
+	<div>
+		<header>
+			<h1>i'm a template !</h1>
+		</header>
+		<p v-if="message">
+			{{ message }}
+		</p>
+		<p v-else>
+			no message
+		<p>
+	<div>
+
+		// render:
+		function anonymous() {
+			with(this){return _c('div', [_m(0), (message)?_c{'p', [_v("no message")]}])}
+		}
+	
+		//staticRenderFns:
+		_m(0): function anonymous(){
+				with(this){return _c('header', [_c('h1', [_v{"i' m a template !!!"}])])}
+		}
+
+
+
+
+//插件（plugin）
+	//一般为Vue添加全局功能 范围没有限制 分为这几种： 
+		//（添加）（vue-）全局方法/属性custom-element  指令/过滤器/过渡touch  通过mixin添加组件选项/提供API同时提供多功能touch  
+		//使用： 在调用new Vue（）前，  用全局方法 Vue.use(组件名) 也可以传入一个选项对象 Vue.use(插件名， {someoption： true})
+			//如在commonJS的模块环境下 应显示调用Vue.use():
+			var Vue = require('vue');   var VueRouter = require ('vue-router');  Vue.use(VueRouter);
+	//开发插件： Vue。js的插件有一个公开方法install 此方法第一参数是Vue（构造期）， 第二参数是一个可选 选项对象：
+	
+		MyPlugin.install = function (Vue, option){
+		
+			//1 添加全局方法/属性
+			Vue.myGlobalMethod = function(){
+				//逻辑
+			}
+
+			//2 添加全局资源
+			Vue.directive('my-directive', {
+					bind (el, binding. vnode, oldVnode){
+						//逻辑
+					}
+					//...
+				})
+
+
+
+			//3 注入组件
+			Vue.mixin({
+				created: function(){
+					//逻辑
+				}
+				//。。。
+			})
+
+			//3 添加实例方法
+			Vue.prototype.$myMethod = function (methodOptions) {
+		i		//逻辑
+			}
+
+
+		}
+
+
+
+//过滤器		
+	//用于文本格式化 用在双花括号插值/v-bind表达式   应添加在js表达式尾  由“管道”符号提示；
+	{{ message | capitalize }}  <div v-bind:id="raeID | formatID"></div>
+
+	filters: {				//写法1 ：组件选项中定义本地过滤器
+		capitalize: function(value){
+			if (!value) return ''
+			value = value.toString()
+			return value.charAt(0).toUpperCase() + value.slice(1)
+		}
+	}
+
+	Vue.filter('capitalize', function(value){		//写法2：Vue实例前定义过滤器
+		if (!value) return ''
+			value = value.toString()
+			return value.charAt(0).toUpperVase() + value.slice(1)
+	})
+	
+	//过滤器可串联； 并且， 由于过滤器是js函数 so 可接受参数：
+	{{ message | filterA('arg1', 'arg2') | filterB}}	
+
+
+
+</script>
+</html>
