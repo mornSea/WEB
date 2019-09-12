@@ -4,7 +4,7 @@
         let timeTool = {                
             name: '处理时间工具库',     
             getISODate: function(){},   
-            getUTCDate: function(){}
+            getUTCDate: function(){},
         }
         //对象字面量   全局只暴露了timeTool对象 
         //不同于其他语言必须要用类实例化 js创建对象方式灵活  
@@ -943,10 +943,12 @@
             //业务开发时应注意使用场景， 不要在编写对象时就预先猜测是否要用代理模式， 只有当对象功能太复杂/访问受到限制时 才考虑用代理
             
 
+
+
 //装饰器            （实现@autobind、 @debounce、 @deprecate）
     //介绍： 向一个对象添加新功能， 但是却不破坏其结构 称为装饰器（Decorator pattern）， 是作为现有的类的一个包装（wrapper）
     //ESnext有一个提案： @开头函数对ES6中的class及其属性/方法进行修饰， 现在要使用， 要配合babel+webpack
-    /* 
+    
         //npm安装依赖:
         npm install babel-core babel-loader babel-plugin-transform-decorators babel-plugin-transform-decorators-legacy babel-preset-env
         //配置.babelrc文件 
@@ -971,7 +973,7 @@
                 "lib": ["es6"],
             }
         }
-    */
+    
 
     //@autobind实现this指向原对象  （this很容易丢， 如过解构赋值的方式提取出来类的this指向undefined）
     function autobind(target, key, descriptor){
@@ -1106,3 +1108,354 @@
         }
         const lib = new MyLib();
         lib.deprecateMethod('调用了一个要在下个版本中被移除的方法');
+    //总结通过ESnext中的装饰器实现装饰器模式，不仅有为类扩充功能的作用，而且在阅读源码的过程中起到了提示作用。
+
+
+
+
+
+
+    //命令模式 
+        //封装函数的调用 请求 操作等， 可以解瓯对象的调用-方法
+        //在需要回调 / 一定顺序调用 / 执行多次 / 保存日志 / 请求者需要和处理请求的对象解耦
+
+        //例子1： 线程池异步执行任务， 用命令模式 让线程池不用知道具体实现， 只要负责任务的保存与执行
+        //原代码：
+        (function(){
+            var canManager = {      //请求资源
+                requestInfo: fucntion(model, id){
+                    return "The information for " + model + "with ID " + id + "is foobar";
+                },
+                buyVehicle: fucntion(model, id){    //car
+                    return "You have successfully purchased Item " + id + ', a' + model
+                }, 
+                arrandeViewing: function(model, id){
+                    return "You have successfully booked a  viewing of" + model + "(" + id  + ")";
+                }   
+            };
+        })();
+        //但是要调用car 相关的函数， 必须要 carManager.buyVehicle('xxx', 'xxx'), 而且当这个函数名称改变的时候， 必须也要改变代码
+        //使用命令模式 ：
+        carManager.execute = function(name){
+            return carManager[name] && carManager[name].apply(carManager, [].slice.call(arguments, 1))
+        }
+        //然后可以这样调用：
+        carManager.execute('arrangeViewing', 'Ferrari', '14523'),
+        //总结：命令模式 使用动态语言的灵活性， 和面向对象的特性， 函数式编程的高级函数传参， 可以更接近思想
+
+
+
+
+
+
+//外观模式
+    //介绍： 为复杂系统提供统一接口， 适合在用简单指令屏蔽所有复杂，系统实现之间有很多yilai， 系统/子系统分层众多
+
+    //1, 例子1： web服务器的service是一个典型的外观模式， 服务器内有复杂业务逻辑/数据库操作，， 但是客户端访问时， 只需要简单功能性的接口：
+    var module = (function(){
+        var _private = {
+            i: 5,              //默认参数
+            get: function(){
+                console.log("current value:" + this.i);
+            },
+            set: function(val){
+                this.i = val;
+            },
+            run: function(){
+                console.log(runing);
+            },
+            jump: function(){
+                console.log('jumping');
+            }
+        };
+        return {
+            facade: function(args){
+                _private.set(args.val);
+                _private.get();
+                if(args.run){
+                    _private.run();
+                }
+            }
+        };
+    })();
+    //调用： 如果要输出 “crrent value： 10” and “runing”
+    module.facede({
+        run: true,
+        val: 10
+    });
+    //总结： 外观模式可以屏蔽很多内部接口， 但是如同使用document.getElementById('foo'), 和使用jQuery的$('foo')一样， 会影响性能
+
+
+
+
+
+
+
+
+
+//享元模式
+    //介绍： 当对象太多消耗内存时， 使用这个可以用共享的对象替代大量对象， （有点像动态编程 + loop中，保存动态变量不用每次计算获取）
+    //例子： 一个图书馆程序
+    var Book = function (id, title, author, genre, pageCount, publisherID, ISBN, checkoutDate, checkoutMember, dueReturnDate, availability) {
+        //Book的参数有书籍各种信息， 但是却只是赋值为this对象内的
+
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.pageCount = pageCount;
+        this.publisherID = publisherID;
+        this.ISBN = ISBN;
+        this.checkoutDate = checkoutDate;
+        this.checkoutMember = checkoutMember;
+        this.dueReturnDate = dueReturnDate;
+        this.availability = availability;
+
+    };
+
+    Book.prototype = {
+        //再在Book的原型中添加获取这些信息的方法
+
+        getTitle: function () {
+            return this.title;
+        },
+
+        getAuthor: function () {
+            return this.author;
+        },
+
+        getISBN: function () {
+            return this.ISBN;
+        },
+
+        // For brevity, other getters are not shown
+        updateCheckoutStatus: function (bookID, newStatus, checkoutDate, checkoutMember, newReturnDate) {
+            //更新检查状态，
+
+            this.id = bookID;
+            this.availability = newStatus;
+            this.checkoutDate = checkoutDate;
+            this.checkoutMember = checkoutMember;
+            this.dueReturnDate = newReturnDate;
+
+        },
+
+        extendCheckoutPeriod: function (bookID, newReturnDate) {
+            //检查以返还书籍？
+
+            this.id = bookID;
+            this.dueReturnDate = newReturnDate;
+
+        },
+
+        isPastDue: function (bookID) {
+            //已经借走/在馆？   更新日期，比较现在和以返还日期
+
+            var currentDate = new Date();
+            return currentDate.getTime() > Date.parse(this.dueReturnDate);
+        }
+    };
+    //分析： 书籍信息中关键的有： id，title， autho， genre， pageCount， publisherID， ISBN， 无关的有checkoutDate， checkoutMember， dueReturnDate，availability，   而每次创建一个对象， 就会创建所有这些属性（虽然已经用了类变量/原型/构造函数）
+
+    //改进版：
+    var Book = function(title, author, genre, pageCount, publisherID, ISBN){
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.pageCount = pageCount;
+        this.publisherID = publisherID;
+        this.ISBN = ISBN;
+    };
+
+    //使用匿名自执行函数的闭包存数据 （以及自带命名空间）：
+    var BookFactory = (fucntion(){  //书籍工厂
+        var existingBooks = {}, existingBook;
+        return {
+            createBook: function(title, author, genre, pageCount, publisherID, ISBN){
+                existingBook = existingBooks[ISBN];
+                if(!!existingBook){     
+                //双反 检查是否有书号对应的书， 有？返回:创建
+                    return existingBook;
+                } else {
+                    var book = new Book(title, author, genre, pageCount, publisherID, ISBN);
+                    existingBooks[ISBN] = book;
+                    return book
+                }
+            }
+        };
+    })();
+
+    var BookRecordManager = (function(){
+
+        var bookeRcordDatabase = {}; //用闭包的对象作数据库
+        return {
+            addBockRecord: function(id, title, author, genre, pageCount, publisherID, ISBN, checkoutDate, checkoutMember, dueReturnDate, evailability){  //将书籍加入’数据库‘
+                var book = BookFactory.createBook(title, author, genre, pageCount, publisherID, ISBN);
+                bookeRcordDatabase[id] = {
+                    checkoutMember: checkoutMember,
+                    checkoutDate: checkoutDate,
+                    dueReturnDate: dueReturnDate,
+                    availability: availability,
+                    book: book
+                };
+            },
+
+            updateCheckoutStatus: function(bookID, newStatus, checkoutDate, checkoutMember, newReturnDate){     //更新状态 通过’数据库‘
+                var record = bookeRcordDatabase[bookID];
+                record.availability = newStatus;
+                record.checkoutDate = checkoutDate;
+                record.checkoutMember = checkoutMember;
+                record.dueReturnDate = newReturnDate;
+            },
+
+            extendCheckoutPeriod: function(bookID, newReturnDate){  //更新被借走的时间周期？
+                bookeRcordDatabase[bookID].dueReturnDate = newReturnDate;
+            },
+
+            isPastDue: function(bookID){    //据时间差算返还否
+                var currentDate = new Date();
+                return currentDate.getTime() > Date.parse(bookeRcordDatabase[ID].dueReturnDate);
+            }
+        };
+    })();
+
+    //改进点在于： 创建书籍的时候 并不需要借书的信息，同样ISBN的书属性又一样 创建书使用ISBN，借书使用bookID， 共享相同书本身的属性 节省内存
+
+    //技术上类似的例子： 没必要每次用DOM创建jQuery对象
+    $("div").on("click", function(){
+        console.log("you clicked " + $(this).attr('id') );
+    });
+
+    $('div').on("click", function(){
+        console.log("you clicked: " + this.id)
+    })
+
+    //总结： UI库常用外观模式，因为都有一些可以共享的属性（CSS类，事件），在大量使用的时候可以节省可观的内存
+
+
+
+
+
+
+
+
+
+//策略模式
+    //介绍： 定义一系列算法， 并一个个封装，使其可相互替换
+    //例子1： jquery的animate方法  都是让元素移动 但linear和cubic是策略模式的封装
+    $(div).animate({        //匀速运动
+        'left: 200px';      
+    }, 1000, 'linear');
+
+    $(div).animate({        //三次方缓动
+        "left: 200px"
+    }, 1000, 'cubic'); 
+
+    //例子2： 有时一些页面会有很多（即时验证）表单， 这些验证的规则不同， 如姓名栏需要 非空+敏感词+长度限制， 如果只是多写if-else/switch， 无法扩展复用， so 把每种验证规则都封装起来 
+    validataList = {
+        notNull: function(value){
+            return value !== '';
+        },
+        maxLength: function(value, maxLength){
+            return value.length() > maxLength;
+        }
+    }
+
+    nameInput.addBaildata({
+        notNull: true,
+        dirtyWords: true,
+        maxLength: 30
+    })
+    //总结： 这样可以得到很高的复用和扩展性， 如果要修改如最大长度，非常简单
+
+
+
+
+
+
+
+
+//迭代器模式
+    //提供一种方法 顺序访问一个聚合对象中的各个元素，而又不需要暴露该方法中的内部表示， 如js中经常封装一个echo函数用来实现迭代器
+    forEach = function(ary, fn){        //array迭代器
+        for (vari=0, l=ary.length; i<l, i++){
+            varc = ary[i];
+            if(fn.call(c, i, c) === false){
+                return false;,
+            }
+        }
+    }
+    forEach([1, 2, 3], function(i, n){
+        aleart(i);
+    })
+
+    forEach = function(obj, fn){        //Objeck迭代器
+        for(var i in obj){
+            varc = obj[i];
+            if(fn.call(c, i, c) === false){
+                return false;
+            }
+        }
+    }
+    forEach({
+        'a': 1,
+        "b": 2
+    }, function(i, n){
+        alert(i);
+    })
+    //总结： 常用的安全迭代模式
+
+
+
+
+
+
+
+
+
+
+
+
+//组合模式
+    //部分=整体模式， 将所有对象组合成树形结构， 用户只用操作最上层的接口， 就可以对所有成员做相同的操作， 
+    //例子1： 其实jquery就是一个典型的对象集合
+     <body>
+        <div>
+            <span>
+                smt
+            </span>
+            <span>
+                smt
+            </span>
+        </div>
+    </body>
+    //如果想取消所有节点上绑定的事件， 原生js要这么写：
+    var allNodes = document.getElementByTagName("*");
+    var len = allNodes.length;
+    while (len--){
+        allNodes.unbind("*");
+    }
+    //jquery写法
+    $('body').unbing("*");
+
+    //因为每个元素都实现unbind接口， so 只要调用最上层对象的unbind就可以自动迭代并调用所有组合内元素的unbind
+
+    //例子2： 再回到原来那个表单验证， 如果不是每个表单项都通过， 提交按钮是灰色 不可点的状态， 即 填写表单后，要去验证每个field
+    if(nameField.validata() && idCard.validata() && email.validata() && phone.validata()){
+        alert("恭喜！ 验证通过！！！");
+    }
+
+    //虽然用前面的外观模式也可以勉强解决分支堆砌的问题， 但是我们不能保证表单里field的数量， 这样不好维护，更好的方式是有个form.validata函数，负责把真正vaildata操作分发给每个组合对象， 这个函数里会依次遍历所有需要校验的field， 
+    form.validata = functon(){
+        forEach(fields, fucntion(index, field){
+            if(field.validata() === false){
+                return false;
+            }
+        })
+    }
+     
+    //组合模式可以与迭代器模式很好的结合， 遍历一个结构， 并每个进行操作， 而不用担心其数量带来的不好维护
+
+
+
+
